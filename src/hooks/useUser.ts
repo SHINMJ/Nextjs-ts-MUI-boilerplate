@@ -1,36 +1,19 @@
-import { useEffect } from 'react'
-import Router from 'next/router'
 import useSWR from 'swr'
 import axios from 'axios'
 
-interface IUser {
-  id?: string
-  redirectTo?: string
-  redirectIfFound?: string
-}
-
-export default function useUser({ id, redirectTo, redirectIfFound }: IUser) {
-  const { data, error } = useSWR(`/api/users`, (url: string) => {
+export default function useUser() {
+  const { data, error, mutate } = useSWR(`/api/proxy/user`, (url: string) => {
     return axios.get(url).then(res => res.data)
   })
 
-  const user = data?.user
-  const finished = Boolean(data)
-  const hasUser = Boolean(user)
-
-  useEffect(() => {
-    if (!redirectTo || !finished) return
-    if (
-      (redirectTo && !redirectIfFound && !hasUser) ||
-      (redirectIfFound && hasUser)
-    ) {
-      Router.push(redirectTo)
-    }
-  }, [redirectTo, redirectIfFound, finished, hasUser])
+  const loading = !data && !error
+  const isLogin = !error && data
 
   return {
-    user,
-    loading: !finished && user == null,
+    user: data,
+    loading,
+    isLogin,
     error,
+    mutate,
   }
 }

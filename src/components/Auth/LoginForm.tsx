@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import Container from '@material-ui/core/Container'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Avatar from '@material-ui/core/Avatar'
@@ -7,11 +7,10 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined'
 import TextField from '@material-ui/core/TextField'
 import FormControlLabel from '@material-ui/core/FormControlLabel'
 import Checkbox from '@material-ui/core/Checkbox'
-import Link from '@material-ui/core/Link'
-import Grid from '@material-ui/core/Grid'
 import Button from '@material-ui/core/Button'
+import Alert from '@material-ui/lab/Alert'
 import { makeStyles, Theme } from '@material-ui/core/styles'
-import { useRouter } from 'next/router'
+import { useForm } from 'react-hook-form'
 import { PageProps } from '@pages/_app'
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -33,20 +32,32 @@ const useStyles = makeStyles((theme: Theme) => ({
   },
 }))
 
+export type loginForm = {
+  email: string
+  password: string
+}
+
 interface ILoginForm extends PageProps {
-  isLogin?: boolean
-  isLoginError?: boolean
-  onSubmit?: () => void
+  errorMessage?: string
+  handleLogin: ({ email, password }: loginForm) => void
 }
 
 /**
  * @TODO
  * 로그인 로직 완료
  */
-const LoginForm: React.FC<ILoginForm> = ({ isLogin = true, isLoginError }) => {
+const LoginForm = ({ handleLogin, errorMessage }: ILoginForm) => {
   const classes = useStyles()
-  const router = useRouter()
-  const [isError, setIsError] = useState(isLoginError)
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm()
+
+  const onSubmit = formData => {
+    handleLogin({ email: formData.email, password: formData.password })
+  }
 
   return (
     <Container component="main" maxWidth="xs">
@@ -56,9 +67,13 @@ const LoginForm: React.FC<ILoginForm> = ({ isLogin = true, isLoginError }) => {
           <LockOutlinedIcon />
         </Avatar>
         <Typography component="h1" variant="h5">
-          Sign in
+          MSA Admin Template
         </Typography>
-        <form className={classes.form} noValidate>
+        <form
+          className={classes.form}
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <TextField
             variant="outlined"
             margin="normal"
@@ -69,6 +84,7 @@ const LoginForm: React.FC<ILoginForm> = ({ isLogin = true, isLoginError }) => {
             name="email"
             autoComplete="email"
             autoFocus
+            {...register('email')}
           />
           <TextField
             variant="outlined"
@@ -80,11 +96,13 @@ const LoginForm: React.FC<ILoginForm> = ({ isLogin = true, isLoginError }) => {
             type="password"
             id="password"
             autoComplete="current-password"
+            {...register('password')}
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
           />
+          {/* {isLoginError && <Alert severity="warning">{errorMessage}</Alert>} */}
           <Button
             type="submit"
             fullWidth
@@ -94,7 +112,7 @@ const LoginForm: React.FC<ILoginForm> = ({ isLogin = true, isLoginError }) => {
           >
             Sign In
           </Button>
-          <Grid container>
+          {/* <Grid container>
             <Grid item xs>
               <Link href="#" variant="body2">
                 Forgot password?
@@ -105,7 +123,7 @@ const LoginForm: React.FC<ILoginForm> = ({ isLogin = true, isLoginError }) => {
                 {"Don't have an account? Sign Up"}
               </Link>
             </Grid>
-          </Grid>
+          </Grid> */}
         </form>
       </div>
     </Container>

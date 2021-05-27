@@ -26,7 +26,7 @@ const MyApp = (props: AppProps) => {
   return (
     <ThemeProvider theme={theme}>
       <Head>
-        <title>MSA Template</title>
+        <title>MSA Admin Template</title>
         <meta
           name="viewport"
           content="minimum-scale=1, initial-scale=1, width=device-width"
@@ -38,7 +38,8 @@ const MyApp = (props: AppProps) => {
       </Head>
       {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
       <CssBaseline />
-      <App component={Component} {...pageProps} />
+      <Component {...pageProps} />
+      {/* <App component={Component} {...pageProps} /> */}
     </ThemeProvider>
   )
 }

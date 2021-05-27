@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 
-//test
+//test api
 /**
  * @TODO
  * user 인증 api

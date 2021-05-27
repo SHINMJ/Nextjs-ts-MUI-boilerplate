@@ -42,8 +42,8 @@ const Layout: React.FC<ILayoutProps> = (props: ILayoutProps) => {
   const { children, className, title } = props
   const classes = useStyles()
   const router = useRouter()
-  const { data } = useSWR('globalState', { initialData: initialStore })
-  const [auth, setAuth] = useState((data || {}).auth)
+  // const { data } = useSWR('globalState', { initialData: initialStore })
+  // const [auth, setAuth] = useState((data || {}).auth)
   const [open, setOpen] = React.useState(false)
 
   const handleDrawerOpen = () => {

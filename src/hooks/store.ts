@@ -1,6 +1,6 @@
 const initialStore = {
-  auth: true,
-  userId: 'dd',
+  isLogin: false,
+  accessToken: '',
 }
 
 export default initialStore

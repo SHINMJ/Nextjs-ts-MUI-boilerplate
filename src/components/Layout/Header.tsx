@@ -10,6 +10,7 @@ import useSWR from 'swr'
 import initialStore from '@hooks/store'
 import { DRAWER_WIDTH } from '@constants'
 import Profile from './Profile'
+import useUser from '@hooks/useUser'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -60,8 +61,8 @@ export interface IHeader {
 const Header: React.FC<IHeader> = (props: IHeader) => {
   const { open, onClick, title } = props
   const classes = useStyles()
-  const { data } = useSWR('globalState', { initialData: initialStore })
-  const [auth, setAuth] = useState((data || {}).auth)
+  const { user } = useUser()
+  // console.log(`header user ${user}`)
 
   return (
     <AppBar
@@ -85,7 +86,7 @@ const Header: React.FC<IHeader> = (props: IHeader) => {
         <Typography variant="h6" noWrap className={classes.title}>
           {title || 'page title or breadcrumb'}
         </Typography>
-        {auth && <Profile id={data.userId} />}
+        {user && <Profile id={user.email} />}
       </Toolbar>
     </AppBar>
   )

@@ -1,9 +1,9 @@
 import { Layout } from '@components/Layout'
-import Loader from '@components/Loader/Loader'
-import LoginLayout from '@components/LoginLayout/LoginLayout'
+import Loader from '@components/Loader'
+import LoginLayout from '@components/LoginLayout'
 import useUser from '@hooks/useUser'
 import { NextComponentType, NextPageContext } from 'next'
-import Router from 'next/router'
+import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
 
 type AppProps = {
@@ -13,13 +13,14 @@ type AppProps = {
 }
 
 const App = ({ component: Component, pathname, ...pageProps }: AppProps) => {
-  const { user, loading, error } = useUser({})
+  const { user, loading } = useUser()
   const authLayout = pathname.startsWith('/auth')
   const isUnAuthPage = pathname !== undefined && authLayout
+  const router = useRouter()
 
   useEffect(() => {
-    if (!isUnAuthPage && user == null) {
-      Router.push('/auth/login')
+    if (!isUnAuthPage && user == undefined) {
+      router.replace('/auth/login')
     }
   }, [user, isUnAuthPage, pathname])
 
@@ -35,7 +36,7 @@ const App = ({ component: Component, pathname, ...pageProps }: AppProps) => {
     return null
   }
 
-  console.log('pathname : ', pathname)
+  console.log(`pathname: ${pathname} , authLayout: ${authLayout}`)
 
   return pathname !== undefined && authLayout ? (
     <LoginLayout>
@@ -43,7 +44,7 @@ const App = ({ component: Component, pathname, ...pageProps }: AppProps) => {
     </LoginLayout>
   ) : (
     <Layout>
-      <Component pathname={pathname} user={user} {...pageProps} />
+      <Component pathname={pathname} {...pageProps} />
     </Layout>
   )
 }

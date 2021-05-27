@@ -1,8 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Typography from '@material-ui/core/Typography'
 import { Layout } from '@components/Layout'
 import useUser from '@hooks/useUser'
+import Loader from '@components/Loader'
+import Router from 'next/router'
 
 const useStyles = makeStyles((_: Theme) =>
   createStyles({
@@ -10,17 +12,35 @@ const useStyles = makeStyles((_: Theme) =>
   }),
 )
 
-type Props = {}
+type Props = {
+  initialLoginStatus: string
+}
 
-export default function Home(props: Props) {
+function Home(props: Props) {
   const classes = useStyles(props)
-  // const user = useUser({})
+  const { user, loading } = useUser()
+  console.log('props', props)
+
+  useEffect(() => {
+    if (!user) {
+      Router.replace('/auth/login')
+    }
+  }, [user])
+
+  if (loading) {
+    return <Loader />
+  }
+
+  if (!user || user == null) {
+    return null
+  }
 
   return (
-    <Layout title="Home">
+    <Layout>
       <Typography variant="h5">MSA Admin Template</Typography>
       <Typography variant="h6">msa admin template</Typography>
-      {/* {user && <p>{user}</p>} */}
     </Layout>
   )
 }
+
+export default Home
