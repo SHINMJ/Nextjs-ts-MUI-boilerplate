@@ -2,9 +2,24 @@ import React from 'react'
 import IconButton from '@material-ui/core/IconButton'
 import Menu from '@material-ui/core/Menu'
 import MenuItem from '@material-ui/core/MenuItem'
-import AccountCircle from '@material-ui/icons/AccountCircle'
-import { Typography } from '@material-ui/core'
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
+import { Link, Typography } from '@material-ui/core'
 import { useRouter } from 'next/router'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+
+const useStyles = makeStyles((theme: Theme) => {
+  createStyles({
+    grow: {
+      flexGrow: 1,
+    },
+    sectionMobile: {
+      display: 'flex',
+      [theme.breakpoints.up('md')]: {
+        display: 'none',
+      },
+    },
+  })
+})
 
 export interface IProfile {
   id: string
@@ -16,15 +31,11 @@ export interface IProfile {
  * 각 메뉴 아이템에 대한 onclick 이벤트 처리
  */
 
-const Profile: React.FC<IProfile> = (props: IProfile) => {
-  const { id } = props
+const Profile: React.FC<IProfile> = ({ id }: IProfile) => {
+  const classes = useStyles()
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
   const router = useRouter()
-
-  const onClickLogout = (e: React.MouseEvent<HTMLElement>) => {
-    router.replace('/auth/logout')
-  }
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget)
@@ -42,7 +53,8 @@ const Profile: React.FC<IProfile> = (props: IProfile) => {
         onClick={handleMenu}
         color="inherit"
       >
-        <AccountCircle />
+        <Typography variant="subtitle1">{id}</Typography>
+        <KeyboardArrowDownIcon />
       </IconButton>
       <Menu
         id="menu-appbar"
@@ -62,7 +74,7 @@ const Profile: React.FC<IProfile> = (props: IProfile) => {
         <MenuItem onClick={handleClose}>Profile</MenuItem>
         <MenuItem onClick={handleClose}>My account</MenuItem>
         <MenuItem>
-          <a href="/auth/logout">Logout</a>
+          <Link href="/auth/logout">Logout</Link>
         </MenuItem>
       </Menu>
     </div>

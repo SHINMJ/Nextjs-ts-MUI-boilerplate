@@ -15,7 +15,7 @@ export const config = {
 export default (req: NextApiRequest, res: NextApiResponse) => {
   return new Promise<void>((resolve, reject) => {
     const pathname = url.pathToFileURL(req.url).pathname
-    const isLogin = pathname === '/api/proxy/login'
+    const isLogin = pathname === '/api/proxy/demo/login'
 
     const cookies = new Cookies(req, res)
     const authToken = cookies.get(AUTH_TOKEN)

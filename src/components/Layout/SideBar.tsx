@@ -15,6 +15,7 @@ import InboxIcon from '@material-ui/icons/MoveToInbox'
 import MailIcon from '@material-ui/icons/Mail'
 import Link from '@material-ui/core/Link'
 import { DRAWER_WIDTH } from '@constants'
+import { Menu } from '@components/Menu'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -47,18 +48,18 @@ const useStyles = makeStyles((theme: Theme) =>
         width: theme.spacing(9) + 1,
       },
     },
-    toolbar: {
+    drawerHeader: {
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'flex-end',
       padding: theme.spacing(0, 1),
       // necessary for content to be below app bar
       ...theme.mixins.toolbar,
+      justifyContent: 'flex-end',
     },
     logo: {
       position: 'relative',
-      padding: '15px 15px',
-      // zIndex: '4',
+      padding: theme.spacing(0, 1),
+      zIndex: 4,
       '&:after': {
         content: '""',
         position: 'absolute',
@@ -97,14 +98,14 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-interface ISideMenu {
+interface ISideBar {
   open: boolean
   onClick: () => void
   logo?: string
   logoText?: string
 }
 
-const SideBar: React.FC<ISideMenu> = (props: ISideMenu) => {
+const SideBar = (props: ISideBar) => {
   const { open, onClick, logo, logoText } = props
   const classes = useStyles()
   const router = useRouter()
@@ -123,7 +124,7 @@ const SideBar: React.FC<ISideMenu> = (props: ISideMenu) => {
         }),
       }}
     >
-      <div className={classes.toolbar}>
+      <div className={classes.drawerHeader}>
         {logo && (
           <div className={classes.logo}>
             <Link
@@ -131,13 +132,6 @@ const SideBar: React.FC<ISideMenu> = (props: ISideMenu) => {
               onClick={() => router.push('/')}
               className={classes.logoLink}
             >
-              <div className={classes.logoImage}>
-                <img
-                  src="/images/egov.png"
-                  alt="logo"
-                  className={classes.img}
-                />
-              </div>
               <span className={classes.logoLink}>{logoText}</span>
             </Link>
           </div>
@@ -147,27 +141,7 @@ const SideBar: React.FC<ISideMenu> = (props: ISideMenu) => {
         </IconButton>
       </div>
       <Divider />
-      <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
+      <Menu menus={[]} />
     </Drawer>
   )
 }
