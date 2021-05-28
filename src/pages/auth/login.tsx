@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import LoginForm, { loginForm } from '@components/Auth/LoginForm'
 import axios from 'axios'
 import useUser from '@hooks/useUser'
 import Router from 'next/router'
-import Loader from '@components/Loader'
-import LoginLayout from '@components/LoginLayout'
 
 const Login = () => {
-  const { mutate, isLogin, user, error } = useUser()
+  const { mutate, isLogin, error } = useUser()
 
   useEffect(() => {
     if (isLogin) {
@@ -21,7 +19,7 @@ const Login = () => {
 
   const onLoginSubmit = async ({ email, password }: loginForm) => {
     try {
-      console.log(`${email} : ${password}`)
+      console.log(`login submit ${email} : ${password}`)
 
       await axios.post('/api/proxy/login', { email, password })
       mutate()
@@ -31,12 +29,10 @@ const Login = () => {
   }
 
   return (
-    <LoginLayout>
-      <LoginForm
-        handleLogin={onLoginSubmit}
-        errorMessage={error?.response.data.message}
-      />
-    </LoginLayout>
+    <LoginForm
+      handleLogin={onLoginSubmit}
+      errorMessage={error?.response.data.message}
+    />
   )
 }
 

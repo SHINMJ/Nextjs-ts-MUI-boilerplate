@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Container from '@material-ui/core/Container'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import Avatar from '@material-ui/core/Avatar'
@@ -48,6 +48,7 @@ interface ILoginForm extends PageProps {
  */
 const LoginForm = ({ handleLogin, errorMessage }: ILoginForm) => {
   const classes = useStyles()
+  const [clicked, setClicked] = useState<boolean>(false)
 
   const {
     register,
@@ -56,6 +57,7 @@ const LoginForm = ({ handleLogin, errorMessage }: ILoginForm) => {
   } = useForm()
 
   const onSubmit = formData => {
+    setClicked(true)
     handleLogin({ email: formData.email, password: formData.password })
   }
 
@@ -102,7 +104,9 @@ const LoginForm = ({ handleLogin, errorMessage }: ILoginForm) => {
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
           />
-          {/* {isLoginError && <Alert severity="warning">{errorMessage}</Alert>} */}
+          {clicked && errorMessage && (
+            <Alert severity="warning">{errorMessage}</Alert>
+          )}
           <Button
             type="submit"
             fullWidth

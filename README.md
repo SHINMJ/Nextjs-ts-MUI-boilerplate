@@ -14,6 +14,7 @@ yarn dev
 
 ## TODO
 
+- useUser 계속 호출 하는거!!!
 - passport.js 활용한 로그인
 - side menu 클릭 시 route
 - React.FC 사용하지 않음 > JSX.Element

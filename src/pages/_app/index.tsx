@@ -38,8 +38,8 @@ const MyApp = (props: AppProps) => {
       </Head>
       {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
       <CssBaseline />
-      <Component {...pageProps} />
-      {/* <App component={Component} {...pageProps} /> */}
+      {/* <Component {...pageProps} /> */}
+      <App component={Component} {...pageProps} />
     </ThemeProvider>
   )
 }
