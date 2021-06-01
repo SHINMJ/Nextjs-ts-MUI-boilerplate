@@ -10,7 +10,7 @@ export default function useUser() {
   )
 
   const loading = !data && !error
-  const isLogin = !error && data
+  const isLogin = !Boolean(error) && Boolean(data)
 
   return {
     user: data,

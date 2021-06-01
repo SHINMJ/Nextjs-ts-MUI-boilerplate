@@ -24,7 +24,7 @@ const App = ({ component: Component, pathname, ...pageProps }: AppProps) => {
   const router = useRouter()
 
   useEffect(() => {
-    if (!isUnAuthPage && user == undefined) {
+    if (!loading && !isUnAuthPage && user === undefined) {
       router.replace('/auth/login')
     }
   }, [user, isUnAuthPage, pathname])

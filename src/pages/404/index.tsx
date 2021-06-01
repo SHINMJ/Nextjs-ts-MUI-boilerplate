@@ -27,25 +27,23 @@ const Error404: React.FC = () => {
   const classes = useStyles()
   const router = useRouter()
   return (
-    <Layout title="404 Not Found">
-      <Card>
-        <CardContent className={classes.content}>
-          <Typography variant="h5" component="h2">
-            404 Not Found
-          </Typography>
-          <Typography className={classes.pos} color="textSecondary">
-            The page you were looking for doesn&apos;t exist
-          </Typography>
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={() => router.push('/')}
-          >
-            Back to Home
-          </Button>
-        </CardContent>
-      </Card>
-    </Layout>
+    <Card>
+      <CardContent className={classes.content}>
+        <Typography variant="h5" component="h2">
+          404 Not Found
+        </Typography>
+        <Typography className={classes.pos} color="textSecondary">
+          The page you were looking for doesn&apos;t exist
+        </Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => router.push('/')}
+        >
+          Back to Home
+        </Button>
+      </CardContent>
+    </Card>
   )
 }
 
