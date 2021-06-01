@@ -3,19 +3,20 @@ import { NextApiRequest, NextApiResponse } from 'next'
 export default (_: NextApiRequest, res: NextApiResponse) => {
   const menus = [
     {
-      title: '설정관리',
+      title: '게시판1',
       id: 'menu_1',
       icon: 'settings',
       level: 1,
       children: [
         {
-          title: '설정관리 서브 1',
+          title: '게시판1 서브 1',
           id: 'menu_1_sub_1',
+          icon: 'settings',
           url: '/board/skin_1',
           level: 2,
         },
         {
-          title: '설정관리 서브 2',
+          title: '게시판1 서브 2',
           id: 'menu_1_sub_2',
           url: '/board/skin_2',
           level: 2,
@@ -23,13 +24,13 @@ export default (_: NextApiRequest, res: NextApiResponse) => {
       ],
     },
     {
-      title: '서비스관리',
+      title: '게시판2',
       id: 'menu_2',
       icon: 'home',
       level: 1,
       children: [
         {
-          title: '서비스관리 서브 1',
+          title: '게시판2 서브 1',
           id: 'menu_2_sub_1',
           url: '/board/skin_3',
           level: 2,

@@ -22,7 +22,7 @@ const Footer: React.FC = () => {
   const classes = useStyles()
 
   return (
-    <Container maxWidth="md" component="footer" className={classes.footer}>
+    <Container component="footer" className={classes.footer}>
       <Typography variant="body1">Footer</Typography>
       <Copyright />
     </Container>
