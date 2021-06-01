@@ -2,7 +2,7 @@ import { Layout } from '@components/Layout'
 import Loader from '@components/Loader'
 import LoginLayout from '@components/LoginLayout'
 import useUser from '@hooks/useUser'
-import { menusState } from '@modules'
+import { menusState } from '@stores'
 import axios from 'axios'
 import { NextComponentType, NextPageContext } from 'next'
 import { useRouter } from 'next/router'
@@ -13,7 +13,6 @@ type AppProps = {
   component: NextComponentType<any, any, any>
   pathname: string
   req?: NextPageContext['req']
-  title?: string
 }
 
 const App = ({ component: Component, pathname, ...pageProps }: AppProps) => {
@@ -56,13 +55,14 @@ const App = ({ component: Component, pathname, ...pageProps }: AppProps) => {
 
   console.log(`pathname: ${pathname} , authLayout: ${authLayout}`)
   console.log('pageProps', pageProps)
+  console.log('router.query', router)
 
   return pathname !== undefined && authLayout ? (
     <LoginLayout>
       <Component pathname={pathname} {...pageProps} />
     </LoginLayout>
   ) : (
-    <Layout title={pageProps.title}>
+    <Layout title={(router.query?.title as string) || ''}>
       <Component pathname={pathname} {...pageProps} />
     </Layout>
   )

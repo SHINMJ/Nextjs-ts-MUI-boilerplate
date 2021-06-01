@@ -10,7 +10,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import { ExpandLess, ExpandMore } from '@material-ui/icons'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
-import { IMenu } from '@modules'
+import { IMenu } from '@stores'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -34,6 +34,7 @@ const MenuItem: React.FC<IMenuItem> = props => {
     if (children && !sub) {
       setOpen(!open)
     } else {
+      console.log(`sub ${sub}, link ${link} title ${title}`)
       router.push(`${link}?title=${title}`, link)
     }
   }
@@ -61,22 +62,11 @@ const MenuItem: React.FC<IMenuItem> = props => {
 
   return (
     <>
-      {
-        url &&
-          // <Link href={url} passHref key={`item-link-${id}`}>
-          setItem(props, false)
-        // </Link>
-      }
-      {!url && setItem(props, false)}
+      {setItem(props, false)}
       {children && (
         <Collapse in={open && drawerOpen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            {children.map(
-              prop =>
-                // <Link href={prop.url} passHref key={`sub-link-${prop.id}`}>
-                setItem(prop, true),
-              // </Link>
-            )}
+            {children.map(prop => setItem(prop, true))}
           </List>
         </Collapse>
       )}

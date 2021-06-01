@@ -1,4 +1,4 @@
-import { AUTH_TOKEN } from '@constants'
+import { AUTH_TOKEN } from '@constants/env'
 import { NextApiRequest, NextApiResponse } from 'next'
 
 export default (req: NextApiRequest, res: NextApiResponse) => {

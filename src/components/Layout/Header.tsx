@@ -11,6 +11,7 @@ import { DRAWER_WIDTH } from '@constants'
 import Profile from './Profile'
 import useUser from '@hooks/useUser'
 import { PageProps } from '@pages/_app'
+import { useRouter } from 'next/router'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -62,6 +63,7 @@ const Header: React.FC<IHeader> = (props: IHeader) => {
   const { open, onClick, title } = props
   const classes = useStyles()
   const { user } = useUser()
+  const router = useRouter()
   console.log(`title = ${title}`)
 
   return (

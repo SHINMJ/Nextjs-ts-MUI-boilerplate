@@ -90,13 +90,6 @@ const useStyles = makeStyles((theme: Theme) =>
       verticalAlign: 'middle',
       border: '0',
     },
-    menuWrapper: {
-      position: 'relative',
-      height: 'calc(100vh - 75px)',
-      overflow: 'auto',
-      zIndex: 4,
-      overflowScrolling: 'touch',
-    },
   }),
 )
 
@@ -144,9 +137,7 @@ const SideBar = (props: ISideBar) => {
         </IconButton>
       </div>
       <Divider />
-      <div className={classes.menuWrapper}>
-        <Menu open={open} />
-      </div>
+      <Menu open={open} />
     </Drawer>
   )
 }

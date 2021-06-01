@@ -2,7 +2,7 @@ import httpProxy, { ProxyResCallback } from 'http-proxy'
 import Cookies from 'cookies'
 import url from 'url'
 import { NextApiRequest, NextApiResponse } from 'next'
-import { AUTH_TOKEN, SERVER_API_URL } from '@constants'
+import { AUTH_TOKEN, SERVER_API_URL } from '@constants/env'
 
 const proxy = httpProxy.createProxyServer()
 

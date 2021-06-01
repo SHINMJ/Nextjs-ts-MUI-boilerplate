@@ -13,6 +13,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    "types": ["node", "jest"],
     "baseUrl": ".",
     "paths": {
       "@pages/*": ["src/pages/*"],
@@ -23,7 +24,9 @@
       "@hooks/*": ["src/hooks/*"],
       "@hooks": ["src/hooks"],
       "@constants": ["src/constants"],
-      "@modules": ["src/modules"]
+      "@constants/*": ["src/constants/*"],
+      "@stores": ["src/stores"],
+      "@libs/*": ["src/libs/*"]
     }
   },
   "exclude": ["node_modules"],

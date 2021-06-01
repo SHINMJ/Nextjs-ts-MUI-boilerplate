@@ -12,7 +12,6 @@ export type PageProps = {
   pathname?: string
   query?: NextPageContext['query']
   req?: NextPageContext['req']
-  title?: string
 }
 
 const MyApp = (props: AppProps) => {
@@ -49,8 +48,9 @@ const MyApp = (props: AppProps) => {
   )
 }
 
-MyApp.getInitialProps = async ({ Component, ctx }: AppContext) => {
+MyApp.getInitialProps = async ({ Component, ctx, router }: AppContext) => {
   let pageProps: PageProps = {}
+  const locale = router.locale
 
   if (Component.getInitialProps) {
     const componentInitialProps = await Component.getInitialProps(ctx)
@@ -59,11 +59,8 @@ MyApp.getInitialProps = async ({ Component, ctx }: AppContext) => {
     }
   }
 
+  global.__localeId__ = locale
   pageProps.pathname = ctx.pathname
-  pageProps.query = ctx.query
-  if (pageProps.query?.title) {
-    pageProps.title = pageProps.query.title as string
-  }
 
   return { pageProps }
 }

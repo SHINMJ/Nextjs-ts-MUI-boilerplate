@@ -1,4 +1,4 @@
-import { AUTH_TOKEN } from '@constants'
+import { AUTH_TOKEN } from '@constants/env'
 
 function getInitialProps({ req, res }) {
   if (!process.browser) {
