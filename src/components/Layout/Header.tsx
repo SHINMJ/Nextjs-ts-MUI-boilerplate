@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import clsx from 'clsx'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -6,11 +6,11 @@ import IconButton from '@material-ui/core/IconButton'
 import MenuIcon from '@material-ui/icons/Menu'
 import Typography from '@material-ui/core/Typography'
 import { Theme, makeStyles, createStyles } from '@material-ui/core/styles'
-import useSWR from 'swr'
-import initialStore from '@hooks/store'
+
 import { DRAWER_WIDTH } from '@constants'
 import Profile from './Profile'
 import useUser from '@hooks/useUser'
+import { PageProps } from '@pages/_app'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -55,14 +55,14 @@ const useStyles = makeStyles((theme: Theme) =>
 export interface IHeader {
   open: boolean
   onClick: () => void
-  title?: string
+  title: string
 }
 
 const Header: React.FC<IHeader> = (props: IHeader) => {
   const { open, onClick, title } = props
   const classes = useStyles()
   const { user } = useUser()
-  // console.log(`header user ${user}`)
+  console.log(`title = ${title}`)
 
   return (
     <AppBar

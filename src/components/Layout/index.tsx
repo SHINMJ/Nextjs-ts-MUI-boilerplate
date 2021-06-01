@@ -1,13 +1,10 @@
-import React, { useState } from 'react'
-import Head from 'next/head'
+import React from 'react'
 import { Container, CssBaseline, Grid, Box } from '@material-ui/core'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import SideMenu from './SideBar'
 import Header from './Header'
 import Footer from './Footer'
-import initialStore from '@hooks/store'
-import useSWR from 'swr'
-import { useRouter } from 'next/router'
+import { PageProps } from '@pages/_app'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -32,7 +29,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-interface ILayoutProps {
+interface ILayoutProps extends PageProps {
   children: React.ReactNode
   className?: string
   title?: string
@@ -41,9 +38,6 @@ interface ILayoutProps {
 const Layout: React.FC<ILayoutProps> = (props: ILayoutProps) => {
   const { children, className, title } = props
   const classes = useStyles()
-  const router = useRouter()
-  // const { data } = useSWR('globalState', { initialData: initialStore })
-  // const [auth, setAuth] = useState((data || {}).auth)
   const [open, setOpen] = React.useState(false)
 
   const handleDrawerOpen = () => {
@@ -56,14 +50,14 @@ const Layout: React.FC<ILayoutProps> = (props: ILayoutProps) => {
 
   return (
     <div className={`${classes.root} ${className}`}>
-      <CssBaseline />
-      <Header open={open} onClick={handleDrawerOpen} />
+      {/* <CssBaseline /> */}
+      <Header open={open} onClick={handleDrawerOpen} title={title} />
 
       <SideMenu
         open={open}
         onClick={handleDrawerClose}
         logoText="MSA Admin"
-        logo="/vercel.svg"
+        logo="/images/adminLogo.png"
       />
 
       <main className={classes.content}>

@@ -22,7 +22,8 @@
       "@styles": ["src/styles"],
       "@hooks/*": ["src/hooks/*"],
       "@hooks": ["src/hooks"],
-      "@constants": ["src/constants"]
+      "@constants": ["src/constants"],
+      "@modules": ["src/modules"]
     }
   },
   "exclude": ["node_modules"],

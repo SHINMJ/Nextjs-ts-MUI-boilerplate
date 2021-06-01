@@ -1,19 +1,13 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import Image from 'next/image'
 import clsx from 'clsx'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Drawer from '@material-ui/core/Drawer'
-import List from '@material-ui/core/List'
 import Divider from '@material-ui/core/Divider'
 import IconButton from '@material-ui/core/IconButton'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
-import InboxIcon from '@material-ui/icons/MoveToInbox'
-import MailIcon from '@material-ui/icons/Mail'
 import Link from '@material-ui/core/Link'
+
 import { DRAWER_WIDTH } from '@constants'
 import { Menu } from '@components/Menu'
 
@@ -80,6 +74,7 @@ const useStyles = makeStyles((theme: Theme) =>
       textDecoration: 'none',
       backgroundColor: 'transparent',
       fontWeight: 400,
+      cursor: 'pointer',
     },
     logoImage: {
       width: '30px',
@@ -95,6 +90,13 @@ const useStyles = makeStyles((theme: Theme) =>
       verticalAlign: 'middle',
       border: '0',
     },
+    menuWrapper: {
+      position: 'relative',
+      height: 'calc(100vh - 75px)',
+      overflow: 'auto',
+      zIndex: 4,
+      overflowScrolling: 'touch',
+    },
   }),
 )
 
@@ -109,6 +111,11 @@ const SideBar = (props: ISideBar) => {
   const { open, onClick, logo, logoText } = props
   const classes = useStyles()
   const router = useRouter()
+
+  const onLogoClick = (e: React.SyntheticEvent) => {
+    e.preventDefault()
+    router.push('/?title=home', '/')
+  }
 
   return (
     <Drawer
@@ -127,11 +134,7 @@ const SideBar = (props: ISideBar) => {
       <div className={classes.drawerHeader}>
         {logo && (
           <div className={classes.logo}>
-            <Link
-              href="/"
-              onClick={() => router.push('/')}
-              className={classes.logoLink}
-            >
+            <Link href="/" onClick={onLogoClick} className={classes.logoLink}>
               <span className={classes.logoLink}>{logoText}</span>
             </Link>
           </div>
@@ -141,7 +144,9 @@ const SideBar = (props: ISideBar) => {
         </IconButton>
       </div>
       <Divider />
-      <Menu menus={[]} />
+      <div className={classes.menuWrapper}>
+        <Menu open={open} />
+      </div>
     </Drawer>
   )
 }
