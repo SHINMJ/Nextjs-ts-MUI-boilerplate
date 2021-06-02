@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import clsx from 'clsx'
 import AppBar from '@material-ui/core/AppBar'
 import Toolbar from '@material-ui/core/Toolbar'
@@ -6,10 +6,12 @@ import IconButton from '@material-ui/core/IconButton'
 import MenuIcon from '@material-ui/icons/Menu'
 import Typography from '@material-ui/core/Typography'
 import { Theme, makeStyles, createStyles } from '@material-ui/core/styles'
-import useSWR from 'swr'
-import initialStore from '@hooks/store'
+
 import { DRAWER_WIDTH } from '@constants'
 import Profile from './Profile'
+import useUser from '@hooks/useUser'
+import { PageProps } from '@pages/_app'
+import { useRouter } from 'next/router'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -41,12 +43,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'none',
     },
     toolbar: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'flex-end',
-      padding: theme.spacing(0, 1),
-      // necessary for content to be below app bar
-      ...theme.mixins.toolbar,
+      paddingRight: 24, // keep right padding when drawer closed
     },
   }),
 )
@@ -54,14 +51,15 @@ const useStyles = makeStyles((theme: Theme) =>
 export interface IHeader {
   open: boolean
   onClick: () => void
-  title?: string
+  title: string
 }
 
 const Header: React.FC<IHeader> = (props: IHeader) => {
   const { open, onClick, title } = props
   const classes = useStyles()
-  const { data } = useSWR('globalState', { initialData: initialStore })
-  const [auth, setAuth] = useState((data || {}).auth)
+  const { user } = useUser()
+  const router = useRouter()
+  console.log(`title = ${title}`)
 
   return (
     <AppBar
@@ -70,7 +68,7 @@ const Header: React.FC<IHeader> = (props: IHeader) => {
         [classes.appBarShift]: open,
       })}
     >
-      <Toolbar>
+      <Toolbar className={classes.toolbar}>
         <IconButton
           color="inherit"
           aria-label="open drawer"
@@ -85,7 +83,7 @@ const Header: React.FC<IHeader> = (props: IHeader) => {
         <Typography variant="h6" noWrap className={classes.title}>
           {title || 'page title or breadcrumb'}
         </Typography>
-        {auth && <Profile id={data.userId} />}
+        {user && <Profile id={user.email} />}
       </Toolbar>
     </AppBar>
   )

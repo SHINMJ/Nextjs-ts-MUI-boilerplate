@@ -2,21 +2,16 @@
 
 Next.js + typescript + material ui 활용한 admin dashboard Boilerplate.
 
+[notion link](https://www.notion.so/Nextjs-MUI-Admin-template-bc57d86c94724bbf83601883c2d5ec13)
+
 ## Getting Started
 
 First, run the development server:
 
 ```bash
+npm install
 npm run dev
 # or
+yarn
 yarn dev
 ```
-
-## TODO
-
-- passport.js 활용한 로그인
-- side menu 클릭 시 route
-- React.FC 사용하지 않음 > JSX.Element
-- README.md update
-- Dockerize
-- ...

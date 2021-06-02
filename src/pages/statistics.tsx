@@ -12,16 +12,16 @@ type Props = {
   initialLoginStatus: string
 }
 
-function Home(props: Props) {
+function Statistics(props: Props) {
   const classes = useStyles(props)
   console.log('props', props)
 
   return (
     <>
       <Typography variant="h5">MSA Admin Template</Typography>
-      <Typography variant="h6">msa admin template</Typography>
+      <Typography variant="h6">Statistics</Typography>
     </>
   )
 }
 
-export default Home
+export default Statistics

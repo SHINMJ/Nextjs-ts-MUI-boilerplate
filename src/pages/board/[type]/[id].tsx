@@ -8,20 +8,16 @@ const useStyles = makeStyles((_: Theme) =>
   }),
 )
 
-type Props = {
-  initialLoginStatus: string
-}
-
-function Home(props: Props) {
+function Post(props) {
   const classes = useStyles(props)
   console.log('props', props)
 
   return (
     <>
-      <Typography variant="h5">MSA Admin Template</Typography>
-      <Typography variant="h6">msa admin template</Typography>
+      <Typography variant="h5">Post</Typography>
+      <Typography variant="h6">Board </Typography>
     </>
   )
 }
 
-export default Home
+export default Post

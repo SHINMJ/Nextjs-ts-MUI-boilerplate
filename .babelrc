@@ -10,7 +10,9 @@
           "@pages": "./src/pages",
           "@styles": "./src/styles",
           "@hooks": "./src/hooks",
-          "@constants": "./src/constants"
+          "@constants": "./src/constants",
+          "@stores": "./src/stores",
+          "@libs": "./src/libs"
         }
       }
     ]

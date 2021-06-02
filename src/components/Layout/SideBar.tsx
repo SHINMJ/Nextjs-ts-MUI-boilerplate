@@ -1,20 +1,15 @@
 import React from 'react'
 import { useRouter } from 'next/router'
-import Image from 'next/image'
 import clsx from 'clsx'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Drawer from '@material-ui/core/Drawer'
-import List from '@material-ui/core/List'
 import Divider from '@material-ui/core/Divider'
 import IconButton from '@material-ui/core/IconButton'
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft'
-import ListItem from '@material-ui/core/ListItem'
-import ListItemIcon from '@material-ui/core/ListItemIcon'
-import ListItemText from '@material-ui/core/ListItemText'
-import InboxIcon from '@material-ui/icons/MoveToInbox'
-import MailIcon from '@material-ui/icons/Mail'
 import Link from '@material-ui/core/Link'
+
 import { DRAWER_WIDTH } from '@constants'
+import { Menu } from '@components/Menu'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -47,18 +42,18 @@ const useStyles = makeStyles((theme: Theme) =>
         width: theme.spacing(9) + 1,
       },
     },
-    toolbar: {
+    drawerHeader: {
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'flex-end',
       padding: theme.spacing(0, 1),
       // necessary for content to be below app bar
       ...theme.mixins.toolbar,
+      justifyContent: 'flex-end',
     },
     logo: {
       position: 'relative',
-      padding: '15px 15px',
-      // zIndex: '4',
+      padding: theme.spacing(0, 1),
+      zIndex: 4,
       '&:after': {
         content: '""',
         position: 'absolute',
@@ -79,6 +74,7 @@ const useStyles = makeStyles((theme: Theme) =>
       textDecoration: 'none',
       backgroundColor: 'transparent',
       fontWeight: 400,
+      cursor: 'pointer',
     },
     logoImage: {
       width: '30px',
@@ -97,17 +93,22 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
-interface ISideMenu {
+interface ISideBar {
   open: boolean
   onClick: () => void
   logo?: string
   logoText?: string
 }
 
-const SideBar: React.FC<ISideMenu> = (props: ISideMenu) => {
+const SideBar = (props: ISideBar) => {
   const { open, onClick, logo, logoText } = props
   const classes = useStyles()
   const router = useRouter()
+
+  const onLogoClick = (e: React.SyntheticEvent) => {
+    e.preventDefault()
+    router.push('/?title=home', '/')
+  }
 
   return (
     <Drawer
@@ -123,21 +124,10 @@ const SideBar: React.FC<ISideMenu> = (props: ISideMenu) => {
         }),
       }}
     >
-      <div className={classes.toolbar}>
+      <div className={classes.drawerHeader}>
         {logo && (
           <div className={classes.logo}>
-            <Link
-              href="/"
-              onClick={() => router.push('/')}
-              className={classes.logoLink}
-            >
-              <div className={classes.logoImage}>
-                <img
-                  src="/images/egov.png"
-                  alt="logo"
-                  className={classes.img}
-                />
-              </div>
+            <Link href="/" onClick={onLogoClick} className={classes.logoLink}>
               <span className={classes.logoLink}>{logoText}</span>
             </Link>
           </div>
@@ -147,27 +137,7 @@ const SideBar: React.FC<ISideMenu> = (props: ISideMenu) => {
         </IconButton>
       </div>
       <Divider />
-      <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem button key={text}>
-            <ListItemIcon>
-              {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-            </ListItemIcon>
-            <ListItemText primary={text} />
-          </ListItem>
-        ))}
-      </List>
+      <Menu open={open} />
     </Drawer>
   )
 }
