@@ -48,21 +48,21 @@ const MyApp = (props: AppProps) => {
   )
 }
 
-MyApp.getInitialProps = async ({ Component, ctx, router }: AppContext) => {
-  let pageProps: PageProps = {}
-  const locale = router.locale
+// MyApp.getInitialProps = async ({ Component, ctx, router }: AppContext) => {
+//   let pageProps: PageProps = {}
+//   const locale = router.locale
 
-  if (Component.getInitialProps) {
-    const componentInitialProps = await Component.getInitialProps(ctx)
-    if (componentInitialProps) {
-      pageProps = componentInitialProps
-    }
-  }
+//   if (Component.getInitialProps) {
+//     const componentInitialProps = await Component.getInitialProps(ctx)
+//     if (componentInitialProps) {
+//       pageProps = componentInitialProps
+//     }
+//   }
 
-  global.__localeId__ = locale
-  pageProps.pathname = ctx.pathname
+//   global.__localeId__ = locale
+//   pageProps.pathname = ctx.pathname
 
-  return { pageProps }
-}
+//   return { pageProps }
+// }
 
 export default MyApp

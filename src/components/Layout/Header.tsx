@@ -43,12 +43,7 @@ const useStyles = makeStyles((theme: Theme) =>
       display: 'none',
     },
     toolbar: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'flex-end',
-      padding: theme.spacing(0, 1),
-      // necessary for content to be below app bar
-      ...theme.mixins.toolbar,
+      paddingRight: 24, // keep right padding when drawer closed
     },
   }),
 )
@@ -73,7 +68,7 @@ const Header: React.FC<IHeader> = (props: IHeader) => {
         [classes.appBarShift]: open,
       })}
     >
-      <Toolbar>
+      <Toolbar className={classes.toolbar}>
         <IconButton
           color="inherit"
           aria-label="open drawer"

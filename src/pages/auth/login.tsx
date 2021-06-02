@@ -3,6 +3,7 @@ import LoginForm, { loginForm } from '@components/Auth/LoginForm'
 import axios from 'axios'
 import useUser from '@hooks/useUser'
 import Router from 'next/router'
+import { API_URL } from '@constants/env'
 
 const Login = () => {
   const { mutate, isLogin, error } = useUser()
@@ -21,7 +22,7 @@ const Login = () => {
     try {
       console.log(`login submit ${email} : ${password}`)
 
-      await axios.post('/api/proxy/demo/login', { email, password })
+      await axios.post(`${API_URL}/demo/login`, { email, password })
       mutate()
     } catch (error) {
       mutate()

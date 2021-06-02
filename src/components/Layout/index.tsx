@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, CssBaseline, Grid, Box } from '@material-ui/core'
+import { Container, Grid } from '@material-ui/core'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import SideMenu from './SideBar'
 import Header from './Header'
@@ -9,18 +9,20 @@ import { PageProps } from '@pages/_app'
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
-      // height: '100%',
       display: 'flex',
     },
     content: {
       flexGrow: 1,
-      padding: theme.spacing(3),
-      height: '100vh',
-      overflow: 'auto',
+      display: 'flex',
+      flexDirection: 'column',
+      minHeight: '100vh',
     },
     container: {
-      paddingTop: theme.spacing(4),
-      paddingBottom: theme.spacing(4),
+      paddingTop: theme.spacing(3),
+      paddingBottom: theme.spacing(3),
+    },
+    toolbar: {
+      paddingRight: 24, // keep right padding when drawer closed
     },
     appBarSpacer: theme.mixins.toolbar,
     authContent: {

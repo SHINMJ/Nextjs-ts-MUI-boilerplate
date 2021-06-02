@@ -1,6 +1,7 @@
 import { Layout } from '@components/Layout'
 import Loader from '@components/Loader'
 import LoginLayout from '@components/LoginLayout'
+import { API_URL } from '@constants/env'
 import useUser from '@hooks/useUser'
 import { menusState } from '@stores'
 import axios from 'axios'
@@ -11,27 +12,28 @@ import { useSetRecoilState } from 'recoil'
 
 type AppProps = {
   component: NextComponentType<any, any, any>
-  pathname: string
+  pathname?: string
   req?: NextPageContext['req']
 }
 
-const App = ({ component: Component, pathname, ...pageProps }: AppProps) => {
+const App = ({ component: Component, ...pageProps }: AppProps) => {
   const { user, loading, isLogin } = useUser()
   const setMenus = useSetRecoilState(menusState)
+  const router = useRouter()
+  const pathname = router.pathname
   const authLayout = pathname.startsWith('/auth')
   const isUnAuthPage = pathname !== undefined && authLayout
-  const router = useRouter()
 
   useEffect(() => {
     if (!loading && !isUnAuthPage && user === undefined) {
       router.replace('/auth/login')
     }
-  }, [user, isUnAuthPage, pathname])
+  }, [user, isUnAuthPage, pathname, loading])
 
   useEffect(() => {
     if (isLogin) {
       const getMenus = async () => {
-        const result = await axios.get('/api/proxy/demo/menus')
+        const result = await axios.get(`${API_URL}/demo/menus`)
         if (result) {
           setMenus(result.data)
         }

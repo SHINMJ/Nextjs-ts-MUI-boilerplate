@@ -1,9 +1,10 @@
 import useSWR from 'swr'
 import axios from 'axios'
+import { API_URL } from '@constants/env'
 
 export default function useUser() {
   const { data, error, mutate } = useSWR(
-    `/api/proxy/demo/user`,
+    `${API_URL}/demo/user`,
     (url: string) => {
       return axios.get(url).then(res => res.data)
     },

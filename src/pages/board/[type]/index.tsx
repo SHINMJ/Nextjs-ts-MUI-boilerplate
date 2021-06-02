@@ -11,7 +11,7 @@ import TableRow from '@material-ui/core/TableRow'
 import TablePaginationActions from '@components/Table/Pagination'
 import axios from 'axios'
 import { GetServerSideProps } from 'next'
-import { SERVER_API_URL } from '@constants/env'
+import { API_URL, SERVER_API_URL } from '@constants/env'
 import { format as dateFormat } from '@libs/date'
 
 interface Column {
@@ -23,12 +23,12 @@ interface Column {
 }
 
 const columns: Column[] = [
-  { id: 'name', label: 'Name', minWidth: 170 },
+  { id: 'name', label: 'Name', minWidth: 150 },
   { id: 'code', label: 'Code', minWidth: 100 },
   {
     id: 'isUse',
     label: '사용여부',
-    // minWidth: 100,
+    minWidth: 100,
     align: 'right',
     format: (value: number) => value.toLocaleString('en-US'),
   },
@@ -50,7 +50,7 @@ const columns: Column[] = [
     label: '권한 버튼',
     minWidth: 100,
     align: 'center',
-    format: (value: boolean) => value,
+    format: (value: number) => value.toLocaleString('en-US'),
   },
 ]
 
@@ -71,8 +71,6 @@ const useStyles = makeStyles({
     maxHeight: 440,
   },
 })
-
-const fetchUrl = '/api/demo/board'
 
 const Board = props => {
   console.log(props)
@@ -148,7 +146,7 @@ const Board = props => {
 
 export const getServerSideProps: GetServerSideProps = async context => {
   const { query } = context
-  const res = await axios.get(`${SERVER_API_URL}demo/board?type=${query.type}`)
+  const res = await axios.get(`${API_URL}/demo/board?type=${query.type}`)
 
   return {
     props: {

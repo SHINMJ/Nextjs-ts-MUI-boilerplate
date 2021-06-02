@@ -42,10 +42,6 @@ interface ILoginForm extends PageProps {
   handleLogin: ({ email, password }: loginForm) => void
 }
 
-/**
- * @TODO
- * 로그인 로직 완료
- */
 const LoginForm = ({ handleLogin, errorMessage }: ILoginForm) => {
   const classes = useStyles()
   const [clicked, setClicked] = useState<boolean>(false)
@@ -104,9 +100,7 @@ const LoginForm = ({ handleLogin, errorMessage }: ILoginForm) => {
             control={<Checkbox value="remember" color="primary" />}
             label="Remember me"
           />
-          {clicked && errorMessage && (
-            <Alert severity="warning">{errorMessage}</Alert>
-          )}
+          {errorMessage && <Alert severity="warning">{errorMessage}</Alert>}
           <Button
             type="submit"
             fullWidth
