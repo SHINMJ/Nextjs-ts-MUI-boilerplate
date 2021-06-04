@@ -3,12 +3,13 @@ import Loader from '@components/Loader'
 import LoginLayout from '@components/LoginLayout'
 import { API_URL } from '@constants/env'
 import useUser from '@hooks/useUser'
-import { menusState } from '@stores'
+import { currentMenuState, menusState } from '@stores'
 import axios from 'axios'
 import { NextComponentType, NextPageContext } from 'next'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import React, { useEffect } from 'react'
-import { useSetRecoilState } from 'recoil'
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
 type AppProps = {
   component: NextComponentType<any, any, any>
@@ -18,7 +19,8 @@ type AppProps = {
 
 const App = ({ component: Component, ...pageProps }: AppProps) => {
   const { user, loading, isLogin } = useUser()
-  const setMenus = useSetRecoilState(menusState)
+  const [menus, setMenus] = useRecoilState(menusState)
+  const [currentMenu, setCurrentMenu] = useRecoilState(currentMenuState)
   const router = useRouter()
   const pathname = router.pathname
   const authLayout = pathname.startsWith('/auth')
@@ -43,6 +45,17 @@ const App = ({ component: Component, ...pageProps }: AppProps) => {
     }
   }, [isLogin])
 
+  useEffect(() => {
+    if (!isUnAuthPage) {
+      const current =
+        menus.find(ele => ele.url === router.asPath) ||
+        menus.reduce((prev, curr) => {
+          return prev || curr.children?.find(ele => ele.url === router.asPath)
+        }, undefined)
+      setCurrentMenu(current)
+    }
+  }, [pathname, menus])
+
   if (loading) {
     return <Loader />
   }
@@ -55,18 +68,23 @@ const App = ({ component: Component, ...pageProps }: AppProps) => {
     return null
   }
 
-  console.log(`pathname: ${pathname} , authLayout: ${authLayout}`)
-  console.log('pageProps', pageProps)
-  console.log('router.query', router)
+  console.log('router.query', router.query)
 
-  return pathname !== undefined && authLayout ? (
-    <LoginLayout>
-      <Component pathname={pathname} {...pageProps} />
-    </LoginLayout>
-  ) : (
-    <Layout title={(router.query?.title as string) || ''}>
-      <Component pathname={pathname} {...pageProps} />
-    </Layout>
+  return (
+    <>
+      <Head>
+        <title>{currentMenu?.title || 'Admin Template'}</title>
+      </Head>
+      {pathname !== undefined && authLayout ? (
+        <LoginLayout>
+          <Component pathname={pathname} {...pageProps} />
+        </LoginLayout>
+      ) : (
+        <Layout>
+          <Component pathname={pathname} {...pageProps} />
+        </Layout>
+      )}
+    </>
   )
 }
 

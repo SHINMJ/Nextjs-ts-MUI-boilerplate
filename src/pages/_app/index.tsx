@@ -6,7 +6,8 @@ import CssBaseline from '@material-ui/core/CssBaseline'
 import theme from '@styles/theme'
 import App from '@components/App/App'
 import { NextPageContext } from 'next'
-import { RecoilRoot } from 'recoil'
+import { RecoilRoot, useRecoilValue } from 'recoil'
+import { currentMenuState } from '@stores'
 
 export type PageProps = {
   pathname?: string
@@ -29,7 +30,6 @@ const MyApp = (props: AppProps) => {
     <RecoilRoot>
       <ThemeProvider theme={theme}>
         <Head>
-          <title>{pageProps.query?.title || 'MSA Admin Template'}</title>
           <meta
             name="viewport"
             content="minimum-scale=1, initial-scale=1, width=device-width"

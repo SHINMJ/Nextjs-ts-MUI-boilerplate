@@ -16,10 +16,7 @@ export const menusState = atom({
   default: [] as IMenu[],
 })
 
-export const menus = selector({
-  key: 'menus',
-  get: ({ get }) => ({
-    total: get(menusState).length,
-    menus: get(menusState),
-  }),
+export const currentMenuState = atom({
+  key: 'currentMenuState',
+  default: {} as IMenu,
 })

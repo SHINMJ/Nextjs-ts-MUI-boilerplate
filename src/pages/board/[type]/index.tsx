@@ -1,28 +1,14 @@
 import React from 'react'
 import { makeStyles } from '@material-ui/core/styles'
-import Paper from '@material-ui/core/Paper'
-import Table from '@material-ui/core/Table'
-import TableBody from '@material-ui/core/TableBody'
-import TableCell from '@material-ui/core/TableCell'
-import TableContainer from '@material-ui/core/TableContainer'
-import TableHead from '@material-ui/core/TableHead'
-import TablePagination from '@material-ui/core/TablePagination'
-import TableRow from '@material-ui/core/TableRow'
-import TablePaginationActions from '@components/Table/Pagination'
 import axios from 'axios'
 import { GetServerSideProps } from 'next'
-import { API_URL, SERVER_API_URL } from '@constants/env'
+import { API_URL } from '@constants/env'
 import { format as dateFormat } from '@libs/date'
+import TableDemo, { IColumn, IRow } from '@components/Table/TableDemo'
+import { useRouter } from 'next/router'
+import DataGridDemo from '@components/Table/DataGridDemo'
 
-interface Column {
-  id: 'name' | 'code' | 'isUse' | 'date' | 'datetime' | 'isEdit'
-  label: string
-  minWidth?: number
-  align?: 'right' | 'left' | 'center' | 'inherit'
-  format?: (value: any) => any
-}
-
-const columns: Column[] = [
+const columns: IColumn[] = [
   { id: 'name', label: 'Name', minWidth: 150 },
   { id: 'code', label: 'Code', minWidth: 100 },
   {
@@ -54,15 +40,6 @@ const columns: Column[] = [
   },
 ]
 
-export interface TableData {
-  name: string
-  code: string
-  isUse: boolean
-  date: string
-  datetime: Date
-  isEdit: boolean
-}
-
 const useStyles = makeStyles({
   root: {
     width: '100%',
@@ -72,75 +49,30 @@ const useStyles = makeStyles({
   },
 })
 
-const Board = props => {
-  console.log(props)
-  const { data } = props
+interface IBoardData extends IRow {
+  isUse: boolean
+  date: string
+  datetime: Date
+  isEdit: boolean
+}
+
+interface IBoard {
+  rows: IBoardData[]
+}
+
+const Board = ({ rows }: IBoard) => {
   const classes = useStyles()
-  const [page, setPage] = React.useState(0)
-  const [rowsPerPage, setRowsPerPage] = React.useState(10)
-
-  const handleChangePage = (
-    event: React.MouseEvent<HTMLButtonElement> | null,
-    newPage: number,
-  ) => {
-    setPage(newPage)
-  }
-
-  const handleChangeRowsPerPage = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setRowsPerPage(+event.target.value)
-    setPage(0)
-  }
+  const route = useRouter()
+  const { type } = route.query
 
   return (
-    <Paper className={classes.root}>
-      <TableContainer className={classes.container}>
-        <Table stickyHeader aria-label="sticky table">
-          <TableHead>
-            <TableRow>
-              {columns.map(column => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {data
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map(row => {
-                return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
-                    {columns.map(column => {
-                      const value = row[column.id]
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.format ? column.format(value) : value}
-                        </TableCell>
-                      )
-                    })}
-                  </TableRow>
-                )
-              })}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
-        component="div"
-        count={data.length}
-        rowsPerPage={rowsPerPage}
-        page={page}
-        onChangePage={handleChangePage}
-        onChangeRowsPerPage={handleChangeRowsPerPage}
-        ActionsComponent={TablePaginationActions}
-      />
-    </Paper>
+    <>
+      {type === 'skin_3' ? (
+        <DataGridDemo />
+      ) : (
+        <TableDemo columns={columns} rows={rows} />
+      )}
+    </>
   )
 }
 
@@ -150,7 +82,7 @@ export const getServerSideProps: GetServerSideProps = async context => {
 
   return {
     props: {
-      data: res.data,
+      rows: res.data,
     },
   }
 }

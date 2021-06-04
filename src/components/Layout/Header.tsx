@@ -12,6 +12,8 @@ import Profile from './Profile'
 import useUser from '@hooks/useUser'
 import { PageProps } from '@pages/_app'
 import { useRouter } from 'next/router'
+import { useRecoilValue } from 'recoil'
+import { currentMenuState } from '@stores'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -51,15 +53,13 @@ const useStyles = makeStyles((theme: Theme) =>
 export interface IHeader {
   open: boolean
   onClick: () => void
-  title: string
 }
 
 const Header: React.FC<IHeader> = (props: IHeader) => {
-  const { open, onClick, title } = props
+  const { open, onClick } = props
   const classes = useStyles()
   const { user } = useUser()
-  const router = useRouter()
-  console.log(`title = ${title}`)
+  const currentMenu = useRecoilValue(currentMenuState)
 
   return (
     <AppBar
@@ -81,7 +81,7 @@ const Header: React.FC<IHeader> = (props: IHeader) => {
           <MenuIcon />
         </IconButton>
         <Typography variant="h6" noWrap className={classes.title}>
-          {title || 'page title or breadcrumb'}
+          {currentMenu?.title || 'Admin Template'}
         </Typography>
         {user && <Profile id={user.email} />}
       </Toolbar>

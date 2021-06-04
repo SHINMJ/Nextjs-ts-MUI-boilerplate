@@ -34,11 +34,10 @@ const useStyles = makeStyles((theme: Theme) =>
 interface ILayoutProps extends PageProps {
   children: React.ReactNode
   className?: string
-  title?: string
 }
 
 const Layout: React.FC<ILayoutProps> = (props: ILayoutProps) => {
-  const { children, className, title } = props
+  const { children, className } = props
   const classes = useStyles()
   const [open, setOpen] = React.useState(false)
 
@@ -53,7 +52,7 @@ const Layout: React.FC<ILayoutProps> = (props: ILayoutProps) => {
   return (
     <div className={`${classes.root} ${className}`}>
       {/* <CssBaseline /> */}
-      <Header open={open} onClick={handleDrawerOpen} title={title} />
+      <Header open={open} onClick={handleDrawerOpen} />
 
       <SideMenu
         open={open}
