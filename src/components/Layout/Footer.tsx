@@ -6,12 +6,9 @@ import Copyright from '@components/Copyright'
 
 const useStyles = makeStyles((theme: Theme) => ({
   footer: {
-    padding: theme.spacing(2, 2),
+    padding: theme.spacing(2),
     marginTop: 'auto',
-    backgroundColor:
-      theme.palette.type === 'light'
-        ? theme.palette.grey[200]
-        : theme.palette.grey[800],
+    backgroundColor: theme.palette.background.default,
   },
 }))
 const Footer: React.FC = () => {

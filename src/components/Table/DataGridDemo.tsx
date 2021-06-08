@@ -1,49 +1,43 @@
 import * as React from 'react'
+import { DataGrid, DataGridProps } from '@material-ui/data-grid'
+import { makeStyles, Theme, createStyles } from '@material-ui/core/styles'
 import {
-  DataGrid,
-  GridColDef,
-  GridValueGetterParams,
-} from '@material-ui/data-grid'
+  GRID_PAGE_SIZE,
+  GRID_ROWS_PER_PAGE_OPTION,
+  GRID_ROW_HEIGHT,
+} from '@constants'
+import DataGridPagination from './DataGridPagination'
 
-const columns: GridColDef[] = [
-  { field: 'id', headerName: 'ID', width: 90 },
-  { field: 'firstName', headerName: 'First name', width: 150 },
-  { field: 'lastName', headerName: 'Last name', width: 150 },
-  {
-    field: 'age',
-    headerName: 'Age',
-    type: 'number',
-    width: 110,
-  },
-  {
-    field: 'fullName',
-    headerName: 'Full name',
-    description: 'This column has a value getter and is not sortable.',
-    sortable: false,
-    width: 160,
-    valueGetter: (params: GridValueGetterParams) =>
-      `${params.getValue(params.id, 'firstName') || ''} ${
-        params.getValue(params.id, 'lastName') || ''
-      }`,
-  },
-]
+export interface IDataGrid extends DataGridProps {}
 
-const rows = [
-  { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-  { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-  { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-  { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-  { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-  { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-  { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-  { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-  { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-]
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      '& .hover': {
+        cursor: 'pointer',
+        color: '#1a3e72',
+      },
+    },
+  }),
+)
 
-export default function DataGridDemo() {
+export default function DataGridDemo(props: IDataGrid) {
+  const { columns, rows, pageSize, rowsPerPageOptions } = props
+  const classes = useStyles()
+  const rowheight = props.rowHeight || GRID_ROW_HEIGHT
   return (
-    <div style={{ height: 440, width: '100%' }}>
-      <DataGrid rows={rows} columns={columns} pageSize={5} checkboxSelection />
+    <div className={classes.root}>
+      <DataGrid
+        rows={rows}
+        columns={columns}
+        rowHeight={rowheight}
+        pageSize={pageSize || GRID_PAGE_SIZE}
+        rowsPerPageOptions={rowsPerPageOptions || GRID_ROWS_PER_PAGE_OPTION}
+        autoHeight={true}
+        pagination
+        {...props}
+        components={{ Pagination: DataGridPagination }}
+      />
     </div>
   )
 }

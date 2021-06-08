@@ -80,7 +80,7 @@ const Header: React.FC<IHeader> = (props: IHeader) => {
         >
           <MenuIcon />
         </IconButton>
-        <Typography variant="h6" noWrap className={classes.title}>
+        <Typography variant="h4" noWrap className={classes.title}>
           {currentMenu?.title || 'Admin Template'}
         </Typography>
         {user && <Profile id={user.email} />}

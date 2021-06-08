@@ -3,16 +3,16 @@ import { NextApiRequest, NextApiResponse } from 'next'
 export default (_: NextApiRequest, res: NextApiResponse) => {
   const menus = [
     {
-      title: '게시판1',
+      title: '설정관리',
       id: 'menu_1',
       icon: 'settings',
       level: 1,
       children: [
         {
-          title: '게시판1 서브 1',
+          title: '이용약관 관리',
           id: 'menu_1_sub_1',
-          icon: 'settings',
-          url: '/board/skin_1',
+          icon: 'assignment',
+          url: '/terms',
           level: 2,
         },
         {

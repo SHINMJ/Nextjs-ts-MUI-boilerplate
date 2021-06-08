@@ -53,7 +53,7 @@ const useStyles = makeStyles((theme: Theme) =>
       justifyContent: 'flex-end',
     },
     logo: {
-      position: 'relative',
+      // position: 'relative',
       padding: theme.spacing(0, 1),
       zIndex: 4,
       '&:after': {
@@ -69,7 +69,8 @@ const useStyles = makeStyles((theme: Theme) =>
     logoLink: {
       textTransform: 'uppercase',
       padding: '5px 0',
-      display: 'block',
+      display: 'flex',
+      flexDirection: 'row',
       fontSize: '18px',
       textAlign: 'left',
       lineHeight: '30px',
@@ -78,17 +79,9 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: 400,
       cursor: 'pointer',
     },
-    logoImage: {
-      width: '30px',
-      display: 'inline-block',
-      maxHeight: '30px',
-      marginLeft: '10px',
-      marginRight: '15px',
-    },
     img: {
       width: '35px',
       top: '22px',
-      position: 'absolute',
       verticalAlign: 'middle',
       border: '0',
     },
@@ -130,7 +123,10 @@ const SideBar = (props: ISideBar) => {
         {logo && (
           <div className={classes.logo}>
             <Link href="/" onClick={onLogoClick} className={classes.logoLink}>
+              {/* <div> */}
+              <img alt="Logo" src={logo} className={classes.img} />
               <span className={classes.logoLink}>{logoText}</span>
+              {/* </div> */}
             </Link>
           </div>
         )}

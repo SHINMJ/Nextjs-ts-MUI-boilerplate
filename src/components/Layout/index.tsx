@@ -1,7 +1,7 @@
 import React from 'react'
 import { Container, Grid } from '@material-ui/core'
 import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
-import SideMenu from './SideBar'
+import SideBar from './SideBar'
 import Header from './Header'
 import Footer from './Footer'
 import { PageProps } from '@pages/_app'
@@ -10,6 +10,7 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       display: 'flex',
+      backgroundColor: theme.palette.background.paper,
     },
     content: {
       flexGrow: 1,
@@ -54,7 +55,7 @@ const Layout: React.FC<ILayoutProps> = (props: ILayoutProps) => {
       {/* <CssBaseline /> */}
       <Header open={open} onClick={handleDrawerOpen} />
 
-      <SideMenu
+      <SideBar
         open={open}
         onClick={handleDrawerClose}
         logoText="MSA Admin"
