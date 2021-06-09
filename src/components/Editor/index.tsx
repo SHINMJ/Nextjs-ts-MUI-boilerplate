@@ -1,8 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react'
-import dynamic from 'next/dynamic'
+import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import Loader from '@components/Loader'
-// import CKEditor from '@ckeditor/ckeditor5-react'
-// import ClassicEditor from '@ckeditor/ckeditor5-build-classic'
+
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      display: 'flex',
+      backgroundColor: theme.palette.background.paper,
+    },
+  }),
+)
 
 const Editor = () => {
   const editorRef = useRef<any>()
@@ -24,14 +31,14 @@ const Editor = () => {
       {editorLoaded ? (
         <CKEditor
           editor={ClassicEditor}
-          data="<p>hello ckeditor</p>"
+          // placeholder="hello ckeditor"
           onReady={(editor: any) => {
             console.log('editor is ready to use', editor)
           }}
           onChange={(event: any, editor: any) => {
-            const data = editor.getData()
-            console.log({ event, editor, data })
-            setData(data)
+            const chanagedata = editor.getData()
+            console.log({ event, editor, chanagedata })
+            setData(chanagedata)
           }}
           onBlur={(event: any, editor: any) => {
             console.log('Blur.', editor)

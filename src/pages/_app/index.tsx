@@ -1,13 +1,13 @@
 import React, { useEffect } from 'react'
 import Head from 'next/head'
-import { AppContext, AppProps } from 'next/app'
+import { AppProps } from 'next/app'
 import { ThemeProvider } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import theme from '@styles/theme'
 import App from '@components/App/App'
 import { NextPageContext } from 'next'
-import { RecoilRoot, useRecoilValue } from 'recoil'
-import { currentMenuState } from '@stores'
+import { RecoilRoot } from 'recoil'
+import '@styles/global.css'
 
 export type PageProps = {
   pathname?: string
