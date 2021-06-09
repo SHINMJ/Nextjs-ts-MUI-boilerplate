@@ -21,6 +21,7 @@ const useStyles = makeStyles((theme: Theme) =>
     container: {
       paddingTop: theme.spacing(3),
       paddingBottom: theme.spacing(3),
+      marginBottom: theme.spacing(1),
     },
     toolbar: {
       paddingRight: 24, // keep right padding when drawer closed
