@@ -1,15 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { makeStyles, createStyles, Theme } from '@material-ui/core/styles'
 import Loader from '@components/Loader'
-
-const useStyles = makeStyles((theme: Theme) =>
-  createStyles({
-    root: {
-      display: 'flex',
-      backgroundColor: theme.palette.background.paper,
-    },
-  }),
-)
+import { API_URL, SERVER_API_URL } from '@constants/env'
 
 const Editor = () => {
   const editorRef = useRef<any>()
@@ -31,7 +22,13 @@ const Editor = () => {
       {editorLoaded ? (
         <CKEditor
           editor={ClassicEditor}
-          // placeholder="hello ckeditor"
+          data={data}
+          config={{
+            // plugins: [SimpleUploadAdapter],
+            ckfinder: {
+              uploadUrl: `${API_URL}/demo/upload`,
+            },
+          }}
           onReady={(editor: any) => {
             console.log('editor is ready to use', editor)
           }}
@@ -46,10 +43,21 @@ const Editor = () => {
           onFocus={(event: any, editor: any) => {
             console.log('Focus.', editor)
           }}
+          onError={({ phase, willEditorRestart }) => {
+            // If the editor is restarted, the toolbar element will be created once again.
+            // The `onReady` callback will be called again and the new toolbar will be added.
+            // This is why you need to remove the older toolbar.
+            console.log('onerror', phase)
+            // console.log(willEditorRestart)
+          }}
         />
       ) : (
         <Loader />
       )}
+      <div
+        className="ck-content"
+        dangerouslySetInnerHTML={{ __html: data }}
+      ></div>
     </>
   )
 }

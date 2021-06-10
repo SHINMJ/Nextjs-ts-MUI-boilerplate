@@ -20,6 +20,8 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
     const cookies = new Cookies(req, res)
     const authToken = cookies.get(AUTH_TOKEN)
 
+    console.log(pathname)
+
     // rewrite url
     // /api/proxy/*  => ${SERVER_URL}/*
     req.url = req.url.replace(/^\/api\/proxy/, '')
@@ -28,8 +30,6 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
     req.headers.cookie = ''
 
     // 대신, header에 authentication 추가
-    console.log(`authToken : ${authToken}`)
-    console.log(` req.url : ${req.url}`)
     if (authToken) {
       req.headers[AUTH_TOKEN] = authToken
     }

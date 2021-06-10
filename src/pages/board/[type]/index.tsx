@@ -67,11 +67,7 @@ const Board = ({ rows }: IBoard) => {
 
   return (
     <>
-      {type === 'skin_3' ? (
-        <DataGridDemo />
-      ) : (
-        <TableDemo columns={columns} rows={rows} />
-      )}
+      <TableDemo columns={columns} rows={rows} />
     </>
   )
 }

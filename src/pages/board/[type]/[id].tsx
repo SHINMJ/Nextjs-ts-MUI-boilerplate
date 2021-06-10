@@ -8,9 +8,8 @@ const useStyles = makeStyles((_: Theme) =>
   }),
 )
 
-function Post(props) {
-  const classes = useStyles(props)
-  console.log('props', props)
+function Post() {
+  const classes = useStyles()
 
   return (
     <>
