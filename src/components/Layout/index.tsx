@@ -5,6 +5,7 @@ import SideBar from './SideBar'
 import Header from './Header'
 import Footer from './Footer'
 import { PageProps } from '@pages/_app'
+import TopBar from '@components/TopBar'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -66,6 +67,7 @@ const Layout: React.FC<ILayoutProps> = (props: ILayoutProps) => {
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
+          <TopBar />
           {children}
           <Grid container spacing={3}></Grid>
         </Container>

@@ -10,8 +10,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import { ExpandLess, ExpandMore } from '@material-ui/icons'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
-import { currentMenuState, IMenu } from '@stores'
-import { useSetRecoilState } from 'recoil'
+import { IMenu } from '@stores'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

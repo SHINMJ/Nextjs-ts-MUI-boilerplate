@@ -15,12 +15,17 @@ export const config = {
 export default (req: NextApiRequest, res: NextApiResponse) => {
   return new Promise<void>((resolve, reject) => {
     const pathname = url.pathToFileURL(req.url).pathname
-    const isLogin = pathname === '/api/proxy/demo/login'
+    const isLogin = pathname === '/api/proxy/v1/login'
 
     const cookies = new Cookies(req, res)
     const authToken = cookies.get(AUTH_TOKEN)
 
-    console.log(pathname)
+    const serverurl =
+      pathname === '/api/proxy/v1/terms'
+        ? SERVER_API_URL
+        : 'http://localhost:3000/api'
+
+    console.log(`pathname: ${pathname} , serverurl : ${serverurl}`)
 
     // rewrite url
     // /api/proxy/*  => ${SERVER_URL}/*
@@ -63,12 +68,14 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
             }
           })
         } else {
+          console.log(req.method)
+          console.log(req.url)
           resolve()
         }
       })
       .once('error', reject)
       .web(req, res, {
-        target: SERVER_API_URL,
+        target: serverurl,
         autoRewrite: false,
         selfHandleResponse: isLogin,
       })

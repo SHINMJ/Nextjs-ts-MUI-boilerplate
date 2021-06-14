@@ -22,7 +22,7 @@ const Login = () => {
     try {
       console.log(`login submit ${email} : ${password}`)
 
-      await axios.post(`${API_URL}/demo/login`, { email, password })
+      await axios.post(`${API_URL}/v1/login`, { email, password })
       mutate()
     } catch (error) {
       mutate()

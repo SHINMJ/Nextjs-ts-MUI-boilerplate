@@ -1,10 +1,26 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Loader from '@components/Loader'
-import { API_URL, SERVER_API_URL } from '@constants/env'
+import { API_URL } from '@constants/env'
 
-const Editor = () => {
+const useStyles = makeStyles((theme: Theme) =>
+  createStyles({
+    root: {
+      paddingTop: theme.spacing(1),
+    },
+  }),
+)
+
+export interface IEditor {
+  contents: string
+  setContents: (data: string) => void
+}
+
+const Editor = (props: IEditor) => {
+  const { contents, setContents } = props
+  const classes = useStyles()
   const editorRef = useRef<any>()
-  const [data, setData] = useState<string>('')
+  // const [data, setData] = useState<string>('')
   const [editorLoaded, setEditorLoaded] = useState<boolean>(false)
   const { CKEditor, ClassicEditor } = editorRef.current || {}
 
@@ -20,44 +36,35 @@ const Editor = () => {
   return (
     <>
       {editorLoaded ? (
-        <CKEditor
-          editor={ClassicEditor}
-          data={data}
-          config={{
-            // plugins: [SimpleUploadAdapter],
-            ckfinder: {
-              uploadUrl: `${API_URL}/demo/upload`,
-            },
-          }}
-          onReady={(editor: any) => {
-            console.log('editor is ready to use', editor)
-          }}
-          onChange={(event: any, editor: any) => {
-            const chanagedata = editor.getData()
-            console.log({ event, editor, chanagedata })
-            setData(chanagedata)
-          }}
-          onBlur={(event: any, editor: any) => {
-            console.log('Blur.', editor)
-          }}
-          onFocus={(event: any, editor: any) => {
-            console.log('Focus.', editor)
-          }}
-          onError={({ phase, willEditorRestart }) => {
-            // If the editor is restarted, the toolbar element will be created once again.
-            // The `onReady` callback will be called again and the new toolbar will be added.
-            // This is why you need to remove the older toolbar.
-            console.log('onerror', phase)
-            // console.log(willEditorRestart)
-          }}
-        />
+        <div className={classes.root}>
+          <CKEditor
+            editor={ClassicEditor}
+            data={contents}
+            config={{
+              // plugins: [SimpleUploadAdapter],
+              ckfinder: {
+                uploadUrl: `${API_URL}/v1/upload`,
+              },
+            }}
+            onReady={(editor: any) => {
+              console.log('editor is ready to use', editor)
+            }}
+            onChange={(event: any, editor: any) => {
+              const chanagedata = editor.getData()
+              console.log({ event, editor, chanagedata })
+              setContents(chanagedata)
+            }}
+            onBlur={(event: any, editor: any) => {
+              console.log('Blur.', editor)
+            }}
+            onFocus={(event: any, editor: any) => {
+              console.log('Focus.', editor)
+            }}
+          />
+        </div>
       ) : (
         <Loader />
       )}
-      <div
-        className="ck-content"
-        dangerouslySetInnerHTML={{ __html: data }}
-      ></div>
     </>
   )
 }

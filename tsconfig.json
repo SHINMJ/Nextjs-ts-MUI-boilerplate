@@ -35,6 +35,6 @@
     "**/*.tsx",
     "next-env.d.ts",
     "next.config.js",
-    "src/pages/api/demo/upload.js"
+    "src/pages/api/v1/upload.js"
   ]
 }
