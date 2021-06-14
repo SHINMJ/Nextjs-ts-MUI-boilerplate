@@ -74,7 +74,7 @@ const Board = ({ rows }: IBoard) => {
 
 export const getServerSideProps: GetServerSideProps = async context => {
   const { query } = context
-  const res = await axios.get(`${API_URL}/demo/board?type=${query.type}`)
+  const res = await axios.get(`${API_URL}/board?type=${query.type}`)
 
   return {
     props: {

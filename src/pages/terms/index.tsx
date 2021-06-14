@@ -138,8 +138,8 @@ const conditions = [
   },
 ]
 
-const Terms = ({ rows }: ITerms) => {
-  const { data, mutate } = useSWR(`${API_URL}/v1/terms`, { initialData: rows })
+const Terms = () => {
+  const { data, mutate } = useSWR(`${API_URL}/terms`)
   const classes = useStyles()
   const route = useRouter()
   const [condition, setCondition] = useState<string>('condition_1')
@@ -217,20 +217,20 @@ const Terms = ({ rows }: ITerms) => {
           </Fab>
         </Box>
       </Box>
-      <DataGridDemo classes={classes} rows={data} columns={columns} />
+      <DataGridDemo classes={classes} rows={data || []} columns={columns} />
     </div>
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async context => {
-  const { query } = context
-  const res = await axios.get(`${API_URL}/v1/terms`)
+// export const getServerSideProps: GetServerSideProps = async context => {
+//   const { query } = context
+//   const res = await axios.get(`${API_URL}/terms`)
 
-  return {
-    props: {
-      rows: res.data,
-    },
-  }
-}
+//   return {
+//     props: {
+//       rows: res.data,
+//     },
+//   }
+// }
 
 export default Terms

@@ -21,7 +21,7 @@ import { ITermsItem } from '.'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
 import Alert from '@material-ui/lab/Alert'
 import axios from 'axios'
-import { API_URL } from '@constants/env'
+import { API_URL, SERVER_API_URL } from '@constants/env'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -72,7 +72,7 @@ interface ITermsFormInput {
   termsType: string
   isUse: boolean
   title: string
-  contents: string
+  contents: { contents?: string; url?: string }
 }
 
 const TermsItem = (props: ITermsItem) => {
@@ -103,10 +103,19 @@ const TermsItem = (props: ITermsItem) => {
   }
 
   const onSubmit = async (data: ITermsFormInput) => {
-    const saved = { ...data, contents: termsContents }
-    console.log('data', saved)
+    const saved: ITermsFormInput = {
+      ...data,
+      contents: { ...data.contents, contents: termsContents },
+    }
     try {
-      const result = await axios.post(`${API_URL}/v1/terms`, saved)
+      const result = await axios({
+        method: 'post',
+        url: `${API_URL}/terms`,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        data: JSON.stringify(saved),
+      })
       console.log(result)
     } catch (error) {
       console.log(`terms save error ${error.message}`)
@@ -249,9 +258,18 @@ const TermsItem = (props: ITermsItem) => {
   )
 }
 
-// TermsItem.getInitialProps =  async context => {
-//   const id = context.
-//   return {}
-// }
+TermsItem.getInitialProps = async context => {
+  const { id } = context.query
+  try {
+    const result = await axios.get(`${API_URL}/terms/${id}`)
+    console.log(result.data)
+  } catch (error) {
+    console.log(`terms items error ${error.message}`)
+  }
+
+  return {
+    id: id,
+  }
+}
 
 export default TermsItem

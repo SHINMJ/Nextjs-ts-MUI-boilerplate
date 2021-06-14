@@ -31,7 +31,7 @@ const GridButton: React.FC<IGridButton> = ({ url, id }) => {
   const onClickDelete = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
     try {
-      axios.delete(`${API_URL}/v1${url}/${id}`)
+      axios.delete(`${API_URL}${url}/${id}`)
     } catch (error) {
       console.log(`grid button delete error ${error.message}`)
     }

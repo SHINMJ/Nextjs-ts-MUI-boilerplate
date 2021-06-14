@@ -43,7 +43,7 @@ const Editor = (props: IEditor) => {
             config={{
               // plugins: [SimpleUploadAdapter],
               ckfinder: {
-                uploadUrl: `${API_URL}/v1/upload`,
+                uploadUrl: `${API_URL}/upload`,
               },
             }}
             onReady={(editor: any) => {

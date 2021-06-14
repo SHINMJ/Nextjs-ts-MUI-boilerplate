@@ -6,11 +6,11 @@ import { AUTH_TOKEN, SERVER_API_URL } from '@constants/env'
 
 const proxy = httpProxy.createProxyServer()
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-}
+// export const config = {
+//   api: {
+//     bodyParser: false,
+//   },
+// }
 
 export default (req: NextApiRequest, res: NextApiResponse) => {
   return new Promise<void>((resolve, reject) => {
@@ -20,16 +20,26 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
     const cookies = new Cookies(req, res)
     const authToken = cookies.get(AUTH_TOKEN)
 
-    const serverurl =
-      pathname === '/api/proxy/v1/terms'
-        ? SERVER_API_URL
-        : 'http://localhost:3000/api'
-
-    console.log(`pathname: ${pathname} , serverurl : ${serverurl}`)
-
     // rewrite url
     // /api/proxy/*  => ${SERVER_URL}/*
-    req.url = req.url.replace(/^\/api\/proxy/, '')
+    req.url = req.url.replace(/^\/api\/proxy\/v1/, '')
+
+    // 임시 url
+    const serverurl =
+      req.url.indexOf('/terms') > -1
+        ? SERVER_API_URL
+        : 'http://localhost:3000/api/v1'
+
+    console.log(
+      `req.url ${req.url}, serverurl: ${serverurl}, methods: ${req.method}`,
+    )
+    console.log(req.body)
+
+    // if(req.url.indexOf('/terms') > -1){
+
+    // }else{
+
+    // }
 
     // server API 에 쿠키를 전달하지 않음.
     req.headers.cookie = ''
@@ -68,8 +78,8 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
             }
           })
         } else {
-          console.log(req.method)
           console.log(req.url)
+          console.log(req.method)
           resolve()
         }
       })

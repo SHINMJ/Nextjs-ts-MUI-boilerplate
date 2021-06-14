@@ -35,7 +35,7 @@ const App = ({ component: Component, ...pageProps }: AppProps) => {
   useEffect(() => {
     if (isLogin) {
       const getMenus = async () => {
-        const result = await axios.get(`${API_URL}/v1/menus`)
+        const result = await axios.get(`${API_URL}/menus`)
         if (result) {
           setMenus(result.data)
         }
