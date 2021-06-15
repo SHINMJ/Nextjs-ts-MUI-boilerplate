@@ -6,11 +6,11 @@ import { AUTH_TOKEN, SERVER_API_URL } from '@constants/env'
 
 const proxy = httpProxy.createProxyServer()
 
-// export const config = {
-//   api: {
-//     bodyParser: false,
-//   },
-// }
+export const config = {
+  api: {
+    bodyParser: true,
+  },
+}
 
 export default (req: NextApiRequest, res: NextApiResponse) => {
   return new Promise<void>((resolve, reject) => {
@@ -33,13 +33,9 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
     console.log(
       `req.url ${req.url}, serverurl: ${serverurl}, methods: ${req.method}`,
     )
-    console.log(req.body)
 
-    // if(req.url.indexOf('/terms') > -1){
-
-    // }else{
-
-    // }
+    const bodyData = JSON.stringify(req.body)
+    // console.log(req.body)
 
     // server API 에 쿠키를 전달하지 않음.
     req.headers.cookie = ''
@@ -50,6 +46,15 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
     }
 
     proxy
+      .once('proxyReq', proxyReq => {
+        if (bodyData !== '') {
+          console.log('bodydata', bodyData)
+          proxyReq.setHeader('Content-Type', 'application/json')
+          proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData))
+          // stream the content
+          proxyReq.write(bodyData)
+        }
+      })
       .once('proxyRes', (proxyRes, req, res) => {
         if (isLogin) {
           let resBody = ''
@@ -78,8 +83,7 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
             }
           })
         } else {
-          console.log(req.url)
-          console.log(req.method)
+          console.log('proxyRes', res.statusCode)
           resolve()
         }
       })

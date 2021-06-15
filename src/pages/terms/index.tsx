@@ -156,7 +156,7 @@ const Terms = () => {
 
   const onClickAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
-    route.push('/terms/new')
+    route.push('/terms/-1')
   }
 
   const onChangeCondition = (event: React.ChangeEvent<HTMLInputElement>) => {

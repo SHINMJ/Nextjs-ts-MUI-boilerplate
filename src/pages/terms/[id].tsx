@@ -59,11 +59,11 @@ const useStyles = makeStyles((theme: Theme) =>
  */
 const typeList = [
   {
-    value: 'type_1',
+    value: 'TOS',
     label: '이용약관',
   },
   {
-    value: 'type_2',
+    value: 'PP',
     label: '개인정보보호지침',
   },
 ]
@@ -103,10 +103,17 @@ const TermsItem = (props: ITermsItem) => {
   }
 
   const onSubmit = async (data: ITermsFormInput) => {
-    const saved: ITermsFormInput = {
+    const saved = {
       ...data,
-      contents: { ...data.contents, contents: termsContents },
+      type: data.termsType,
+      registDate: new Date(),
+      contents: {
+        ...data.contents,
+        contents: termsContents,
+        url: null,
+      },
     }
+
     try {
       const result = await axios({
         method: 'post',
@@ -146,7 +153,7 @@ const TermsItem = (props: ITermsItem) => {
                   </Select>
                 )}
                 control={control}
-                defaultValue={type || 'type_1'}
+                defaultValue={type || 'TOS'}
               />
             </Grid>
             <Grid item xs={12} sm={2}>
