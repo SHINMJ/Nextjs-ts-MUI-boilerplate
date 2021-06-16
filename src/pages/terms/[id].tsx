@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Editor from '@components/Editor'
 import {
@@ -9,6 +9,9 @@ import {
   Grid,
   Typography,
   Select,
+  Backdrop,
+  CircularProgress,
+  Snackbar,
 } from '@material-ui/core'
 import Paper from '@material-ui/core/Paper'
 import Switch from '@material-ui/core/Switch'
@@ -19,9 +22,10 @@ import { useRouter } from 'next/router'
 import Popover from '@material-ui/core/Popover'
 import { ITermsItem } from '.'
 import { Controller, FormProvider, useForm } from 'react-hook-form'
-import Alert from '@material-ui/lab/Alert'
-import axios from 'axios'
+import Alert, { Color } from '@material-ui/lab/Alert'
+import axios, { Method } from 'axios'
 import { API_URL, SERVER_API_URL } from '@constants/env'
+import useSWR from 'swr'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -50,6 +54,10 @@ const useStyles = makeStyles((theme: Theme) =>
         margin: theme.spacing(1),
       },
     },
+    backdrop: {
+      zIndex: theme.zIndex.drawer + 1,
+      color: '#fff',
+    },
   }),
 )
 
@@ -75,16 +83,26 @@ interface ITermsFormInput {
   contents: { contents?: string; url?: string }
 }
 
-const TermsItem = (props: ITermsItem) => {
-  const { id, type, isUse, title, contents } = props
+const TermsItem = props => {
+  const { id, initData } = props
   const classes = useStyles()
   const route = useRouter()
 
   const [termsContents, setTermsContents] = useState<string>(
-    contents?.contents || '',
+    initData?.contents?.contents || '',
   )
 
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
+  const [backdrop, setBackdrop] = useState<boolean>(false)
+  const [snackbar, setSnacbar] = useState<{
+    open: boolean
+    severity: Color
+    message: string
+  }>({
+    open: false,
+    severity: 'success',
+    message: 'save Success!!!!',
+  })
 
   const methods = useForm<ITermsFormInput>()
   const {
@@ -93,44 +111,66 @@ const TermsItem = (props: ITermsItem) => {
     handleSubmit,
   } = methods
 
-  const onClickCancel = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault()
-    route.back()
-  }
-
   const handlePopover = (target: HTMLButtonElement | null) => {
     setAnchorEl(target)
   }
 
-  const onSubmit = async (data: ITermsFormInput) => {
+  const onSubmit = async (formData: ITermsFormInput) => {
+    setBackdrop(true)
     const saved = {
-      ...data,
-      type: data.termsType,
-      registDate: new Date(),
+      ...formData,
+      type: formData.termsType,
+      registDate: id > -1 ? initData.registDate : new Date(),
       contents: {
-        ...data.contents,
+        ...formData.contents,
         contents: termsContents,
         url: null,
       },
     }
 
     try {
+      let method: Method = 'post'
+      let url: string = `${API_URL}/terms`
+      if (id > -1) {
+        method = 'put'
+        url = `${API_URL}/terms/${id}`
+      }
+
       const result = await axios({
-        method: 'post',
-        url: `${API_URL}/terms`,
+        method,
+        url,
         headers: {
           'Content-Type': 'application/json',
         },
         data: JSON.stringify(saved),
       })
-      console.log(result)
+      handlePopover(null)
+      setBackdrop(false)
+      setSnacbar({
+        open: true,
+        severity: 'success',
+        message: 'saved Success',
+      })
     } catch (error) {
       console.log(`terms save error ${error.message}`)
+      handlePopover(null)
+      setBackdrop(false)
+      setSnacbar({
+        open: true,
+        severity: 'error',
+        message: error.message,
+      })
     }
   }
 
-  const cancelOpen = Boolean(anchorEl)
-  const cancelPopId = cancelOpen ? 'simple-popover' : undefined
+  const saveOpen = Boolean(anchorEl)
+  const savePopId = saveOpen ? 'simple-popover' : undefined
+  const snackbarClose = () => {
+    setSnacbar({
+      ...snackbar,
+      open: false,
+    })
+  }
 
   return (
     <div className={classes.root}>
@@ -153,7 +193,7 @@ const TermsItem = (props: ITermsItem) => {
                   </Select>
                 )}
                 control={control}
-                defaultValue={type || 'TOS'}
+                defaultValue={initData?.type || 'TOS'}
               />
             </Grid>
             <Grid item xs={12} sm={2}>
@@ -170,7 +210,7 @@ const TermsItem = (props: ITermsItem) => {
                     />
                   )}
                   control={control}
-                  defaultValue={isUse === undefined ? true : isUse}
+                  defaultValue={initData?.isUse}
                 />
               </Paper>
             </Grid>
@@ -191,7 +231,7 @@ const TermsItem = (props: ITermsItem) => {
                     />
                   )}
                   control={control}
-                  defaultValue={title || ''}
+                  defaultValue={initData?.title || ''}
                   rules={{ required: true }}
                 />
                 {errors.title && errors.title.type === 'required' && (
@@ -209,14 +249,25 @@ const TermsItem = (props: ITermsItem) => {
         <Button
           variant="contained"
           onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
+            event.preventDefault()
+            route.push(`/terms`)
+          }}
+          color="default"
+        >
+          목록
+        </Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
             handlePopover(event.currentTarget)
           }}
         >
-          취소
+          저장
         </Button>
         <Popover
-          id={cancelPopId}
-          open={cancelOpen}
+          id={savePopId}
+          open={saveOpen}
           anchorEl={anchorEl}
           onClose={() => {
             handlePopover(null)
@@ -232,7 +283,7 @@ const TermsItem = (props: ITermsItem) => {
         >
           <Card>
             <CardContent>
-              <Typography variant="h5">취소할까요?</Typography>
+              <Typography variant="h5">저장하겠습니까?</Typography>
             </CardContent>
             <CardActions>
               <Button
@@ -246,36 +297,45 @@ const TermsItem = (props: ITermsItem) => {
               <Button
                 variant="outlined"
                 color="secondary"
-                onClick={onClickCancel}
+                onClick={handleSubmit(onSubmit)}
               >
                 확인
               </Button>
             </CardActions>
           </Card>
         </Popover>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSubmit(onSubmit)}
-        >
-          저장
-        </Button>
       </Box>
+      <Backdrop open={backdrop} className={classes.backdrop}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={2000}
+        onClose={snackbarClose}
+      >
+        <Alert onClose={snackbarClose} severity={snackbar.severity}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </div>
   )
 }
 
 TermsItem.getInitialProps = async context => {
   const { id } = context.query
+  let data = {}
   try {
     const result = await axios.get(`${API_URL}/terms/${id}`)
-    console.log(result.data)
+    if (result) {
+      data = result.data
+    }
   } catch (error) {
-    console.log(`terms items error ${error.message}`)
+    console.log(`terms item query error ${error.message}`)
   }
 
   return {
     id: id,
+    initData: data,
   }
 }
 

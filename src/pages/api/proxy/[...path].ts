@@ -34,7 +34,7 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
       `req.url ${req.url}, serverurl: ${serverurl}, methods: ${req.method}`,
     )
 
-    const bodyData = JSON.stringify(req.body)
+    const bodyData = req.body
     // console.log(req.body)
 
     // server API 에 쿠키를 전달하지 않음.
@@ -47,12 +47,13 @@ export default (req: NextApiRequest, res: NextApiResponse) => {
 
     proxy
       .once('proxyReq', proxyReq => {
-        if (bodyData !== '') {
-          console.log('bodydata', bodyData)
+        if (bodyData) {
+          console.log('bodyData', bodyData)
+          const data = JSON.stringify(bodyData)
           proxyReq.setHeader('Content-Type', 'application/json')
-          proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData))
+          proxyReq.setHeader('Content-Length', Buffer.byteLength(data))
           // stream the content
-          proxyReq.write(bodyData)
+          proxyReq.write(data)
         }
       })
       .once('proxyRes', (proxyRes, req, res) => {

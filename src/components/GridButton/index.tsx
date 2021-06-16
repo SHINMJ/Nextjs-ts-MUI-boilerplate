@@ -15,26 +15,22 @@ const useStyles = makeStyles((theme: Theme) =>
 )
 
 export interface IGridButton {
-  url: string
   id: string
+  funDelete: (id: string) => void
+  funUpdate: (id: string) => void
 }
 
-const GridButton: React.FC<IGridButton> = ({ url, id }) => {
+const GridButton: React.FC<IGridButton> = ({ id, funDelete, funUpdate }) => {
   const classes = useStyles()
-  const route = useRouter()
 
   const onClickModify = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
-    route.push(`${url}/${id}`)
+    funUpdate(id)
   }
 
   const onClickDelete = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
-    try {
-      axios.delete(`${API_URL}${url}/${id}`)
-    } catch (error) {
-      console.log(`grid button delete error ${error.message}`)
-    }
+    funDelete(id)
   }
 
   return (

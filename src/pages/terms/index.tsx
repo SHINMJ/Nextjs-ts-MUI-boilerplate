@@ -1,9 +1,10 @@
-import React, { useState } from 'react'
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+import React, { createRef, useEffect, useState } from 'react'
 import axios from 'axios'
-import { GetServerSideProps } from 'next'
-import { API_URL } from '@constants/env'
-import { format as dateFormat } from '@libs/date'
+import useSWR from 'swr'
+import { useRouter } from 'next/router'
+import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
+
 import {
   GridCellParams,
   GridColDef,
@@ -11,10 +12,7 @@ import {
   GridValueFormatterParams,
   GridValueGetterParams,
 } from '@material-ui/data-grid'
-import { useRouter } from 'next/router'
-import DataGridDemo from '@components/Table/DataGridDemo'
 import Switch from '@material-ui/core/Switch'
-import Button from '@material-ui/core/Button'
 import Box from '@material-ui/core/Box'
 import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
@@ -22,9 +20,12 @@ import IconButton from '@material-ui/core/IconButton'
 import SearchIcon from '@material-ui/icons/Search'
 import Fab from '@material-ui/core/Fab'
 import AddIcon from '@material-ui/icons/Add'
-import Link from 'next/link'
-import useSWR from 'swr'
+
+import { API_URL } from '@constants/env'
+import { format as dateFormat } from '@libs/date'
+import DataGridDemo from '@components/Table/DataGridDemo'
 import GridButton from '@components/GridButton'
+import { conditionAtom, conditionSelector } from '@stores'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -62,7 +63,7 @@ export interface ITermsItem extends GridRowsProp {
   rownum: number
 }
 
-const columns: GridColDef[] = [
+const preColumns: GridColDef[] = [
   {
     field: 'rownum',
     headerName: '번호',
@@ -118,49 +119,168 @@ const columns: GridColDef[] = [
     width: 200,
     sortable: false,
     renderCell: (params: GridCellParams) => (
-      <GridButton url="/terms" id={params.value as string} />
+      <GridButton
+        id={params.value as string}
+        funDelete={() => {}}
+        funUpdate={() => {}}
+      />
     ),
   },
 ]
 
-interface ITerms {
-  rows: ITermsItem[]
-}
-
-const conditions = [
+const searchTypes = [
   {
-    value: 'condition_1',
+    value: 'title',
     label: '제목',
   },
   {
-    value: 'condition_2',
+    value: 'contents',
     label: '내용',
   },
 ]
 
-const Terms = () => {
-  const { data, mutate } = useSWR(`${API_URL}/terms`)
+const fetcher = async (url: string, param: {}) => {
+  console.log('params', param)
+  const res = await axios.get(url, {
+    params: param,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  })
+
+  if (res.status > 200) {
+    const error = new Error('An Error occured while fetching the data!!!')
+
+    error.message = await res.data
+    error.name = String(res.status)
+
+    throw error
+  }
+
+  return res.data
+}
+
+const Terms = props => {
+  // const { id } = props
   const classes = useStyles()
   const route = useRouter()
-  const [condition, setCondition] = useState<string>('condition_1')
 
-  console.log('data', data)
+  /**
+   * 상태관리 필요한 훅
+   */
+  const localValue = useRecoilValue(conditionAtom('terms'))
+  const setValue = useSetRecoilState(conditionSelector('terms'))
 
-  const onClickSearch = (event: React.MouseEvent<HTMLButtonElement>) => {}
+  const inputRef = createRef<HTMLInputElement>()
+  const [searchType, setSearchType] = useState<string>('title')
+  const [inputValue, setInputValue] = useState<string>('')
+  const { data, mutate } = useSWR(
+    [`${API_URL}/terms`, inputValue],
+    (url, inputValue) => fetcher(url, { searchType, value: inputValue }),
+    { revalidateOnFocus: false },
+  )
 
-  const onKeyPressSearch = (event: React.KeyboardEvent<HTMLElement>) => {
-    if (event.key === 'Enter') {
-      event.preventDefault()
+  /**
+   *
+   * 필요 비지니스 로직
+   */
+
+  //삭제
+  const deleteTerms = async (id: string) => {
+    try {
+      const result = await axios.delete(`${API_URL}/terms/${id}`)
+      if (result.status === 200) {
+        mutate()
+      }
+    } catch (error) {
+      console.log(`terms delete error ${error.message}`)
     }
   }
 
+  //수정 시 상세 화면 이동
+  const updateTerms = (id: string) => {
+    route.push(`/terms/${id}`)
+  }
+
+  //사용여부 toggle 시 바로 update
+  const toggleIsUse = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+    id: string,
+  ) => {
+    try {
+      const result = await axios.patch(`${API_URL}/terms/${id}`, {
+        isUse: event.target.checked,
+      })
+      console.log('result', result)
+      if (result.status === 200) {
+        mutate()
+      }
+    } catch (error) {
+      console.log(`terms delete error ${error.message}`)
+    }
+    21
+  }
+
+  const columns = preColumns.map(item =>
+    item.field === 'id'
+      ? {
+          ...item,
+          renderCell: (params: GridCellParams) => (
+            <GridButton
+              id={params.value as string}
+              funDelete={deleteTerms}
+              funUpdate={updateTerms}
+            />
+          ),
+        }
+      : item.field === 'isUse'
+      ? {
+          ...item,
+          renderCell: (params: GridCellParams) => (
+            <Switch
+              checked={Boolean(params.value)}
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                toggleIsUse(event, params.getValue(params.id, 'id') as string)
+              }
+            />
+          ),
+        }
+      : item,
+  )
+
+  const search = () => {
+    setInputValue(inputRef.current?.value)
+    setValue({ searchType, inputValue: inputRef.current?.value })
+    mutate()
+  }
+
+  /**
+   *
+   * @param event
+   */
+  //조회조건 select
+  const onChangeSearchType = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchType(event.target.value)
+  }
+
+  // search button click
+  const onClickSearch = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault()
+    search()
+  }
+
+  // 조회조건 input 엔터
+  const onKeyPressSearch = (event: React.KeyboardEvent<HTMLElement>) => {
+    if (event.key === 'Enter') {
+      event.preventDefault()
+      search()
+    }
+  }
+
+  // add button 클릭 시 신규화면 이동
   const onClickAdd = (event: React.MouseEvent<HTMLButtonElement>) => {
     event.preventDefault()
     route.push('/terms/-1')
-  }
-
-  const onChangeCondition = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setCondition(event.target.value)
   }
 
   return (
@@ -177,12 +297,13 @@ const Terms = () => {
           <TextField
             id="filled-select-currency"
             select
-            value={condition}
-            onChange={onChangeCondition}
+            value={searchType}
+            onChange={onChangeSearchType}
             variant="outlined"
             fullWidth
+            defaultValue={localValue ? localValue['searchType'] : 'title'}
           >
-            {conditions.map(option => (
+            {searchTypes.map(option => (
               <MenuItem key={option.value} value={option.value}>
                 {option.label}
               </MenuItem>
@@ -191,13 +312,13 @@ const Terms = () => {
         </Box>
         <Box width="auto" className={classes.search}>
           <TextField
+            inputRef={inputRef}
             placeholder="Search..."
             inputProps={{ 'aria-label': 'search' }}
             variant="outlined"
             onKeyPress={onKeyPressSearch}
+            defaultValue={localValue ? localValue['inputValue'] : ''}
           />
-          {/* </Box>
-          <Box width="auto" className={classes.search}> */}
           <IconButton
             className={classes.iconButton}
             aria-label="search"

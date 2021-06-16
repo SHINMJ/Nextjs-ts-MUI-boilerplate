@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "start:dev": "next",
     "dev": "ts-node --project tsconfig.server.json server/index.ts",
     "clean:dev": "rimraf .next",
     "build:server": "tsc --project tsconfig.server.json",
