@@ -5,7 +5,7 @@ import SideBar from './SideBar'
 import Header from './Header'
 import Footer from './Footer'
 import { PageProps } from '@pages/_app'
-import TopBar from '@components/TopBar'
+import Bread from './Bread'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -20,8 +20,8 @@ const useStyles = makeStyles((theme: Theme) =>
       minHeight: '100vh',
     },
     container: {
-      paddingTop: theme.spacing(3),
-      paddingBottom: theme.spacing(3),
+      paddingTop: theme.spacing(2),
+      paddingBottom: theme.spacing(2),
       marginBottom: theme.spacing(1),
     },
     toolbar: {
@@ -67,7 +67,7 @@ const Layout: React.FC<ILayoutProps> = (props: ILayoutProps) => {
       <main className={classes.content}>
         <div className={classes.appBarSpacer} />
         <Container maxWidth="lg" className={classes.container}>
-          <TopBar />
+          <Bread />
           {children}
           <Grid container spacing={3}></Grid>
         </Container>

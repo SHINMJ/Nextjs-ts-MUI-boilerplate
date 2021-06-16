@@ -9,6 +9,7 @@ export interface IMenu {
   hidden?: boolean
   children?: IMenu[]
   level: number
+  auth: 'read' | 'edit' | 'none'
 }
 
 export const menusState = atom({
@@ -19,4 +20,12 @@ export const menusState = atom({
 export const currentMenuState = atom({
   key: 'currentMenuState',
   default: {} as IMenu,
+})
+
+export const menuAuthSelect = selector({
+  key: 'menuAuthSelect',
+  get: ({ get }) => {
+    const current = get(currentMenuState)
+    return current?.auth || 'none'
+  },
 })

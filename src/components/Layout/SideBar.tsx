@@ -10,8 +10,6 @@ import Link from '@material-ui/core/Link'
 
 import { DRAWER_WIDTH } from '@constants'
 import { Menu } from '@components/Menu'
-import { useSetRecoilState } from 'recoil'
-import { currentMenuState, IMenu } from '@stores'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({

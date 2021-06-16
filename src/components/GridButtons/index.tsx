@@ -20,7 +20,7 @@ export interface IGridButton {
   funUpdate: (id: string) => void
 }
 
-const GridButton: React.FC<IGridButton> = ({ id, funDelete, funUpdate }) => {
+const GridButtons: React.FC<IGridButton> = ({ id, funDelete, funUpdate }) => {
   const classes = useStyles()
 
   const onClickModify = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -59,4 +59,4 @@ const GridButton: React.FC<IGridButton> = ({ id, funDelete, funUpdate }) => {
   )
 }
 
-export default GridButton
+export default GridButtons

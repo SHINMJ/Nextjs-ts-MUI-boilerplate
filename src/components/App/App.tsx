@@ -3,12 +3,12 @@ import Loader from '@components/Loader'
 import LoginLayout from '@components/LoginLayout'
 import { API_URL } from '@constants/env'
 import useUser from '@hooks/useUser'
-import { currentMenuState, menusState } from '@stores'
+import { currentMenuState, IMenu, menusState } from '@stores'
 import axios from 'axios'
 import { NextComponentType, NextPageContext } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
 type AppProps = {
@@ -45,13 +45,29 @@ const App = ({ component: Component, ...pageProps }: AppProps) => {
     }
   }, [isLogin])
 
+  const findCurrent = useCallback(
+    (path: string) => {
+      const current =
+        menus.find(ele => ele.url === path) ||
+        menus.reduce((prev, curr) => {
+          return prev || curr.children?.find(ele => ele.url === path)
+        }, undefined)
+      return current
+    },
+    [menus],
+  )
+
   useEffect(() => {
     if (!isUnAuthPage) {
-      const current =
-        menus.find(ele => ele.url === router.asPath) ||
-        menus.reduce((prev, curr) => {
-          return prev || curr.children?.find(ele => ele.url === router.asPath)
-        }, undefined)
+      let current: IMenu | undefined = undefined
+      let paths = router.asPath
+      while (true) {
+        current = findCurrent(paths)
+        paths = paths.substring(0, paths.lastIndexOf('/'))
+        if (current || paths.length < 1) {
+          break
+        }
+      }
       setCurrentMenu(current)
     }
   }, [pathname, menus])

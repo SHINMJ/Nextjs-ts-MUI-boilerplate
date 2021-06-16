@@ -2,9 +2,9 @@ import React, { createRef, useEffect, useState } from 'react'
 import axios from 'axios'
 import useSWR from 'swr'
 import { useRouter } from 'next/router'
-import { useRecoilValue, useSetRecoilState } from 'recoil'
-import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
+// material-ui deps
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import {
   GridCellParams,
   GridColDef,
@@ -21,12 +21,17 @@ import SearchIcon from '@material-ui/icons/Search'
 import Fab from '@material-ui/core/Fab'
 import AddIcon from '@material-ui/icons/Add'
 
+// 내부 컴포넌트 및 custom hook, etc...
 import { API_URL } from '@constants/env'
 import { format as dateFormat } from '@libs/date'
 import DataGridDemo from '@components/Table/DataGridDemo'
-import GridButton from '@components/GridButton'
-import { conditionAtom, conditionSelector } from '@stores'
+import GridButton from '@components/GridButtons'
 
+// 상태관리 recoil
+import { useRecoilValue, useSetRecoilState } from 'recoil'
+import { conditionAtom, conditionSelector, menuAuthSelect } from '@stores'
+
+// material-ui style
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
@@ -34,9 +39,6 @@ const useStyles = makeStyles((theme: Theme) =>
       '& .MuiOutlinedInput-input': {
         padding: theme.spacing(1),
       },
-    },
-    container: {
-      paddingBottom: theme.spacing(1),
     },
     search: {
       padding: theme.spacing(1),
@@ -53,6 +55,7 @@ const useStyles = makeStyles((theme: Theme) =>
   }),
 )
 
+//그리드 rows 타입 지정
 export interface ITermsItem extends GridRowsProp {
   id: number
   type: string
@@ -63,6 +66,7 @@ export interface ITermsItem extends GridRowsProp {
   rownum: number
 }
 
+//그리드 컬럼 정의
 const preColumns: GridColDef[] = [
   {
     field: 'rownum',
@@ -128,6 +132,7 @@ const preColumns: GridColDef[] = [
   },
 ]
 
+//조회조건 select items
 const searchTypes = [
   {
     value: 'title',
@@ -139,6 +144,7 @@ const searchTypes = [
   },
 ]
 
+//목록 데이터 조회하는 fetcher
 const fetcher = async (url: string, param: {}) => {
   console.log('params', param)
   const res = await axios.get(url, {
@@ -160,7 +166,9 @@ const fetcher = async (url: string, param: {}) => {
   return res.data
 }
 
-const Terms = props => {
+// 실제 render되는 컴포넌트
+const Terms = () => {
+  // props 및 전역변수
   // const { id } = props
   const classes = useStyles()
   const route = useRouter()
@@ -168,12 +176,18 @@ const Terms = props => {
   /**
    * 상태관리 필요한 훅
    */
+  //조회조건 상태관리
   const localValue = useRecoilValue(conditionAtom('terms'))
   const setValue = useSetRecoilState(conditionSelector('terms'))
+  const menuAuth = useRecoilValue(menuAuthSelect)
+  console.log(menuAuth)
 
+  //현 페이지내 필요한 hook
   const inputRef = createRef<HTMLInputElement>()
   const [searchType, setSearchType] = useState<string>('title')
   const [inputValue, setInputValue] = useState<string>('')
+
+  //목록 데이터 조회 및 관리 hook > useSWR 사용
   const { data, mutate } = useSWR(
     [`${API_URL}/terms`, inputValue],
     (url, inputValue) => fetcher(url, { searchType, value: inputValue }),
@@ -181,8 +195,7 @@ const Terms = props => {
   )
 
   /**
-   *
-   * 필요 비지니스 로직
+   * 비지니스 로직
    */
 
   //삭제
@@ -190,6 +203,7 @@ const Terms = props => {
     try {
       const result = await axios.delete(`${API_URL}/terms/${id}`)
       if (result.status === 200) {
+        //목록 상태 업데이트
         mutate()
       }
     } catch (error) {
@@ -213,6 +227,7 @@ const Terms = props => {
       })
       console.log('result', result)
       if (result.status === 200) {
+        //목록 상태 업데이트
         mutate()
       }
     } catch (error) {
@@ -221,6 +236,7 @@ const Terms = props => {
     21
   }
 
+  // 목록컬럼 재정의 > 컬럼에 비지니스 로직이 필요한 경우
   const columns = preColumns.map(item =>
     item.field === 'id'
       ? {
@@ -248,6 +264,7 @@ const Terms = props => {
       : item,
   )
 
+  //목록 조회
   const search = () => {
     setInputValue(inputRef.current?.value)
     setValue({ searchType, inputValue: inputRef.current?.value })
@@ -255,10 +272,9 @@ const Terms = props => {
   }
 
   /**
-   *
-   * @param event
+   * element event
    */
-  //조회조건 select
+  //조회조건 select change
   const onChangeSearchType = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchType(event.target.value)
   }
@@ -285,14 +301,7 @@ const Terms = props => {
 
   return (
     <div className={classes.root}>
-      <Box
-        display="flex"
-        flexDirection="row"
-        justifyContent="flex-end"
-        p={1}
-        m={1}
-        className={classes.container}
-      >
+      <Box display="flex" flexDirection="row" justifyContent="flex-end">
         <Box width="15%" className={classes.search}>
           <TextField
             id="filled-select-currency"

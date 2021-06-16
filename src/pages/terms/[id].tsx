@@ -1,36 +1,29 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
+import axios, { Method } from 'axios'
+import { useRouter } from 'next/router'
+import { Controller, FormProvider, useForm } from 'react-hook-form'
+
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 import Editor from '@components/Editor'
-import {
-  Button,
-  CardActions,
-  CardContent,
-  Card,
-  Grid,
-  Typography,
-  Select,
-  Backdrop,
-  CircularProgress,
-  Snackbar,
-} from '@material-ui/core'
 import Paper from '@material-ui/core/Paper'
 import Switch from '@material-ui/core/Switch'
 import TextField from '@material-ui/core/TextField'
 import MenuItem from '@material-ui/core/MenuItem'
 import Box from '@material-ui/core/Box'
-import { useRouter } from 'next/router'
-import Popover from '@material-ui/core/Popover'
-import { ITermsItem } from '.'
-import { Controller, FormProvider, useForm } from 'react-hook-form'
 import Alert, { Color } from '@material-ui/lab/Alert'
-import axios, { Method } from 'axios'
-import { API_URL, SERVER_API_URL } from '@constants/env'
-import useSWR from 'swr'
+import Grid from '@material-ui/core/Grid'
+import Select from '@material-ui/core/Select'
+
+import { API_URL } from '@constants/env'
+import EditButton, { IAlertMessage } from '@components/DetailButtons'
+import { useRecoilValue } from 'recoil'
+import { menuAuthSelect } from '@stores'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       flexGrow: 1,
+      marginTop: theme.spacing(1),
       '& .MuiOutlinedInput-input': {
         padding: theme.spacing(2),
       },
@@ -88,35 +81,39 @@ const TermsItem = props => {
   const classes = useStyles()
   const route = useRouter()
 
+  //상태관리 hook
+  const menuAuth = useRecoilValue(menuAuthSelect)
+  console.log(menuAuth)
+
+  //Editor contents
   const [termsContents, setTermsContents] = useState<string>(
     initData?.contents?.contents || '',
   )
 
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
-  const [backdrop, setBackdrop] = useState<boolean>(false)
-  const [snackbar, setSnacbar] = useState<{
-    open: boolean
-    severity: Color
-    message: string
-  }>({
-    open: false,
-    severity: 'success',
-    message: 'save Success!!!!',
+  //form hook
+  const methods = useForm<ITermsFormInput>({
+    defaultValues: {
+      termsType: initData?.type || 'TOS',
+      isUse: initData?.isUse || true,
+      title: initData?.title,
+    },
   })
-
-  const methods = useForm<ITermsFormInput>()
   const {
     formState: { errors },
     control,
     handleSubmit,
   } = methods
 
-  const handlePopover = (target: HTMLButtonElement | null) => {
-    setAnchorEl(target)
-  }
+  // <목록, 저장> 버튼 component 상태 전이
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [saveMessage, setSaveMessage] = useState<IAlertMessage>({
+    severity: 'success',
+    message: '저장되었습니다!!',
+  })
 
+  //onsubmit 저장
   const onSubmit = async (formData: ITermsFormInput) => {
-    setBackdrop(true)
+    setIsLoading(true)
     const saved = {
       ...formData,
       type: formData.termsType,
@@ -144,32 +141,14 @@ const TermsItem = props => {
         },
         data: JSON.stringify(saved),
       })
-      handlePopover(null)
-      setBackdrop(false)
-      setSnacbar({
-        open: true,
-        severity: 'success',
-        message: 'saved Success',
-      })
+
+      setIsLoading(false)
+      setSaveMessage({ severity: 'success', message: 'saved Success' })
     } catch (error) {
       console.log(`terms save error ${error.message}`)
-      handlePopover(null)
-      setBackdrop(false)
-      setSnacbar({
-        open: true,
-        severity: 'error',
-        message: error.message,
-      })
+      setIsLoading(false)
+      setSaveMessage({ severity: 'error', message: error.message })
     }
-  }
-
-  const saveOpen = Boolean(anchorEl)
-  const savePopId = saveOpen ? 'simple-popover' : undefined
-  const snackbarClose = () => {
-    setSnacbar({
-      ...snackbar,
-      open: false,
-    })
   }
 
   return (
@@ -203,14 +182,15 @@ const TermsItem = props => {
               <Paper className={classes.switch}>
                 <Controller
                   name="isUse"
-                  render={({ field }) => (
+                  render={({ field: { onChange, ref, value } }) => (
                     <Switch
                       inputProps={{ 'aria-label': 'secondary checkbox' }}
-                      {...field}
+                      onChange={onChange}
+                      inputRef={ref}
+                      checked={value}
                     />
                   )}
                   control={control}
-                  defaultValue={initData?.isUse}
                 />
               </Paper>
             </Grid>
@@ -231,7 +211,6 @@ const TermsItem = props => {
                     />
                   )}
                   control={control}
-                  defaultValue={initData?.title || ''}
                   rules={{ required: true }}
                 />
                 {errors.title && errors.title.type === 'required' && (
@@ -245,82 +224,19 @@ const TermsItem = props => {
           <Editor contents={termsContents} setContents={setTermsContents} />
         </form>
       </FormProvider>
-      <Box className={classes.buttonContainer}>
-        <Button
-          variant="contained"
-          onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-            event.preventDefault()
-            route.push(`/terms`)
-          }}
-          color="default"
-        >
-          목록
-        </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-            handlePopover(event.currentTarget)
-          }}
-        >
-          저장
-        </Button>
-        <Popover
-          id={savePopId}
-          open={saveOpen}
-          anchorEl={anchorEl}
-          onClose={() => {
-            handlePopover(null)
-          }}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'center',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'center',
-          }}
-        >
-          <Card>
-            <CardContent>
-              <Typography variant="h5">저장하겠습니까?</Typography>
-            </CardContent>
-            <CardActions>
-              <Button
-                variant="outlined"
-                onClick={() => {
-                  handlePopover(null)
-                }}
-              >
-                닫기
-              </Button>
-              <Button
-                variant="outlined"
-                color="secondary"
-                onClick={handleSubmit(onSubmit)}
-              >
-                확인
-              </Button>
-            </CardActions>
-          </Card>
-        </Popover>
-      </Box>
-      <Backdrop open={backdrop} className={classes.backdrop}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
-      <Snackbar
-        open={snackbar.open}
-        autoHideDuration={2000}
-        onClose={snackbarClose}
-      >
-        <Alert onClose={snackbarClose} severity={snackbar.severity}>
-          {snackbar.message}
-        </Alert>
-      </Snackbar>
+      <EditButton
+        handleList={() => {
+          route.push('/terms')
+        }}
+        handleSave={handleSubmit(onSubmit)}
+        isLoading={isLoading}
+        saveMessage={saveMessage}
+      />
     </div>
   )
 }
 
+//initialprops에서 데이터 조회
 TermsItem.getInitialProps = async context => {
   const { id } = context.query
   let data = {}

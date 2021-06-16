@@ -25,7 +25,7 @@ import AddIcon from '@material-ui/icons/Add'
 import { API_URL } from '@constants/env'
 import { format as dateFormat } from '@libs/date'
 import DataGridDemo from '@components/Table/DataGridDemo'
-import GridButton from '@components/GridButton'
+import GridButton from '@components/GridButtons'
 
 // 상태관리 recoil
 import { useRecoilValue, useSetRecoilState } from 'recoil'

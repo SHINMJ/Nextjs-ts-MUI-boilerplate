@@ -14,12 +14,7 @@ export default (_: NextApiRequest, res: NextApiResponse) => {
           icon: 'assignment',
           url: '/terms',
           level: 2,
-        },
-        {
-          title: '게시판1 서브 2',
-          id: 'menu_1_sub_2',
-          url: '/board/skin_2',
-          level: 2,
+          auth: 'edit',
         },
       ],
     },
@@ -34,6 +29,14 @@ export default (_: NextApiRequest, res: NextApiResponse) => {
           id: 'menu_2_sub_1',
           url: '/board/skin_3',
           level: 2,
+          auth: 'read',
+        },
+        {
+          title: '게시판2 서브 2',
+          id: 'menu_2_sub_2',
+          url: '/board/skin_1',
+          level: 2,
+          auth: 'read',
         },
       ],
     },
@@ -43,6 +46,7 @@ export default (_: NextApiRequest, res: NextApiResponse) => {
       icon: 'home',
       url: '/statistics',
       level: 1,
+      auth: 'read',
     },
   ]
 

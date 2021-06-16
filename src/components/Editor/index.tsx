@@ -7,6 +7,9 @@ const useStyles = makeStyles((theme: Theme) =>
   createStyles({
     root: {
       paddingTop: theme.spacing(1),
+      '& .ck-editor__editable_inline': {
+        minHeight: '200px',
+      },
     },
   }),
 )
@@ -20,7 +23,6 @@ const Editor = (props: IEditor) => {
   const { contents, setContents } = props
   const classes = useStyles()
   const editorRef = useRef<any>()
-  // const [data, setData] = useState<string>('')
   const [editorLoaded, setEditorLoaded] = useState<boolean>(false)
   const { CKEditor, ClassicEditor } = editorRef.current || {}
 
@@ -41,7 +43,6 @@ const Editor = (props: IEditor) => {
             editor={ClassicEditor}
             data={contents}
             config={{
-              // plugins: [SimpleUploadAdapter],
               ckfinder: {
                 uploadUrl: `${API_URL}/upload`,
               },
