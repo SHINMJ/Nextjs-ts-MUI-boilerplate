@@ -15,7 +15,7 @@ import Grid from '@material-ui/core/Grid'
 import Select from '@material-ui/core/Select'
 
 import { API_URL } from '@constants/env'
-import EditButton, { IAlertMessage } from '@components/DetailButtons'
+import EditButton, { IAlertMessage } from '@components/Buttons/DetailButtons'
 import { useRecoilValue } from 'recoil'
 import { menuAuthSelect } from '@stores'
 
