@@ -37,6 +37,11 @@ interface IMenuItem extends IMenu {
   drawerOpen: boolean
 }
 
+/**
+ * @TODO
+ * 3단계 이상 그려지는 메뉴 처리
+ */
+
 const MenuItem: React.FC<IMenuItem> = props => {
   const { expanded, drawerOpen } = props
   const classes = useStyles()
@@ -56,7 +61,12 @@ const MenuItem: React.FC<IMenuItem> = props => {
 
   const drawItem = useCallback(
     (item: IMenu) => {
-      const active = current?.id === item.id ? true : false
+      const active =
+        current?.id === item.id
+          ? true
+          : item.children?.findIndex(ele => ele.id === current?.id) > -1
+          ? true
+          : false
 
       return (
         <div key={`list-item-div-${item.id}`} className={classes.root}>

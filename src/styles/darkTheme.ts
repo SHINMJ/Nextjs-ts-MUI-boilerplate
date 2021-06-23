@@ -2,6 +2,11 @@ import { createMuiTheme, colors } from '@material-ui/core'
 import typography from './typography'
 import shadows from './shadows'
 
+/**
+ * @TODO
+ * custom theme에 필요한 것들 지정
+ */
+
 // Create a theme instance.
 const darkTheme = createMuiTheme({
   palette: {
