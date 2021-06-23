@@ -29,3 +29,24 @@ export const menuAuthSelect = selector({
     return current?.auth || 'none'
   },
 })
+
+export const flatMenusSelect = selector({
+  key: 'flatMenusSelect',
+  get: ({ get }) => {
+    const menus = get(menusState)
+
+    let flatMenus = []
+    const getAllItems = (menu: IMenu) => {
+      flatMenus.push(menu)
+      if (menu.children) {
+        return menu.children.map(i => getAllItems(i))
+      }
+    }
+
+    menus.forEach(item => {
+      getAllItems(item)
+    })
+
+    return flatMenus
+  },
+})

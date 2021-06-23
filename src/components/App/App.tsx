@@ -1,14 +1,16 @@
-import { Layout } from '@components/Layout'
-import Loader from '@components/Loader'
-import LoginLayout from '@components/LoginLayout'
-import { API_URL } from '@constants/env'
-import useUser from '@hooks/useUser'
-import { currentMenuState, IMenu, menusState } from '@stores'
+import React, { useCallback, useEffect } from 'react'
 import axios from 'axios'
 import { NextComponentType, NextPageContext } from 'next'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import React, { useCallback, useEffect } from 'react'
+
+import { Layout } from '@components/Layout'
+import Loader from '@components/Loader'
+import LoginLayout from '@components/LoginLayout'
+import { API_URL } from '@constants/env'
+
+import useUser from '@hooks/useUser'
+import { currentMenuState, flatMenusSelect, IMenu, menusState } from '@stores'
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil'
 
 type AppProps = {
@@ -18,13 +20,16 @@ type AppProps = {
 }
 
 const App = ({ component: Component, ...pageProps }: AppProps) => {
-  const { user, loading, isLogin } = useUser()
-  const [menus, setMenus] = useRecoilState(menusState)
-  const [currentMenu, setCurrentMenu] = useRecoilState(currentMenuState)
   const router = useRouter()
   const pathname = router.pathname
   const authLayout = pathname.startsWith('/auth')
   const isUnAuthPage = pathname !== undefined && authLayout
+
+  const { user, loading, isLogin } = useUser()
+
+  const [menus, setMenus] = useRecoilState(menusState)
+  const [currentMenu, setCurrentMenu] = useRecoilState(currentMenuState)
+  const flatMenus = useRecoilValue(flatMenusSelect)
 
   useEffect(() => {
     if (!loading && !isUnAuthPage && user === undefined) {
@@ -45,14 +50,10 @@ const App = ({ component: Component, ...pageProps }: AppProps) => {
     }
   }, [isLogin])
 
+  //current menu
   const findCurrent = useCallback(
     (path: string) => {
-      const current =
-        menus.find(ele => ele.url === path) ||
-        menus.reduce((prev, curr) => {
-          return prev || curr.children?.find(ele => ele.url === path)
-        }, undefined)
-      return current
+      return flatMenus.find(item => item.url === path)
     },
     [menus],
   )
@@ -83,8 +84,6 @@ const App = ({ component: Component, ...pageProps }: AppProps) => {
   if (!isUnAuthPage && !user) {
     return null
   }
-
-  console.log('router.query', router.query)
 
   return (
     <>

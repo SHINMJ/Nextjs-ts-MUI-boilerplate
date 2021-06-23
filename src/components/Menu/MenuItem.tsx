@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import Link from 'next/link'
+import React, { useCallback, useState } from 'react'
 import { useRouter } from 'next/router'
+
 import Icon from '@material-ui/core/Icon'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemText from '@material-ui/core/ListItemText'
@@ -10,12 +10,25 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import { ExpandLess, ExpandMore } from '@material-ui/icons'
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles'
 
-import { IMenu } from '@stores'
+import { currentMenuState, IMenu } from '@stores'
+import theme from '@styles/theme'
+import { useRecoilValue } from 'recoil'
+import classNames from 'classnames'
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
-    nested: {
-      paddingLeft: theme.spacing(4),
+    root: {},
+    menuItem: {
+      borderBottom: '1px solid #edf1f7',
+      display: 'flex',
+      overflow: 'hidden',
+      width: 'auto',
+      transition: 'all 300ms linear',
+      position: 'relative',
+      backgroundColor: 'transparent',
+    },
+    active: {
+      color: theme.palette.primary.main,
     },
   }),
 )
@@ -25,52 +38,57 @@ interface IMenuItem extends IMenu {
 }
 
 const MenuItem: React.FC<IMenuItem> = props => {
+  const { expanded, drawerOpen } = props
   const classes = useStyles()
-  const { expanded, children, drawerOpen } = props
-  const [open, setOpen] = useState<boolean>(expanded || false)
   const router = useRouter()
 
-  const onClick = (sub: boolean, item: IMenu) => {
-    if (children && !sub) {
+  const current = useRecoilValue(currentMenuState)
+
+  const [open, setOpen] = useState<boolean>(expanded || false)
+
+  const onClick = (item: IMenu) => {
+    if (item.children) {
       setOpen(!open)
     } else {
       router.push(item.url)
     }
   }
 
-  const isActive = (url: string) => {
-    return router.pathname === url
-  }
+  const drawItem = useCallback(
+    (item: IMenu) => {
+      const active = current?.id === item.id ? true : false
 
-  const setItem = (sub: boolean, item: IMenu) => (
-    <ListItem
-      button
-      key={`list-item-${item.id}`}
-      onClick={() => onClick(sub, item)}
-      className={sub ? classes.nested : ''}
-    >
-      {item.icon && (
-        <ListItemIcon>
-          <Icon> {item.icon}</Icon>
-        </ListItemIcon>
-      )}
-      <ListItemText key={`item-text-${item.id}`} primary={item.title} />
-      {item.children && (open ? <ExpandLess /> : <ExpandMore />)}
-    </ListItem>
+      return (
+        <div key={`list-item-div-${item.id}`} className={classes.root}>
+          <ListItem
+            button
+            key={`list-item-${item.id}`}
+            onClick={() => onClick(item)}
+            className={`${classes.menuItem} ${active ? classes.active : null}`}
+            style={{ paddingLeft: theme.spacing(item.level * 3) }}
+          >
+            {item.icon && (
+              <ListItemIcon className={active ? classes.active : null}>
+                <Icon> {item.icon}</Icon>
+              </ListItemIcon>
+            )}
+            <ListItemText key={`item-text-${item.id}`} primary={item.title} />
+            {item.children && (open ? <ExpandLess /> : <ExpandMore />)}
+          </ListItem>
+          {item.children ? (
+            <Collapse in={open && drawerOpen} timeout="auto" unmountOnExit>
+              <List component="div" disablePadding>
+                {item.children.map(i => drawItem(i))}
+              </List>
+            </Collapse>
+          ) : null}
+        </div>
+      )
+    },
+    [props, open],
   )
 
-  return (
-    <>
-      {setItem(false, props)}
-      {children && (
-        <Collapse in={open && drawerOpen} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            {children.map(item => setItem(true, item))}
-          </List>
-        </Collapse>
-      )}
-    </>
-  )
+  return <>{drawItem(props)}</>
 }
 
 export default MenuItem

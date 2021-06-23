@@ -2,9 +2,9 @@ import { CircularProgress, Container, Typography } from '@material-ui/core'
 import Breadcrumbs from '@material-ui/core/Breadcrumbs'
 import Link from '@material-ui/core/Link'
 import { Theme, makeStyles } from '@material-ui/core/styles'
-import { currentMenuState, menusState } from '@stores'
+import { currentMenuState, flatMenusSelect } from '@stores'
 import { useRouter } from 'next/router'
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useRecoilValue } from 'recoil'
 
 const useStyles = makeStyles((theme: Theme) => ({
@@ -16,32 +16,75 @@ const useStyles = makeStyles((theme: Theme) => ({
 const Bread: React.FC = () => {
   const classes = useStyles()
   const router = useRouter()
-  const menus = useRecoilValue(menusState)
+  const flatMenus = useRecoilValue(flatMenusSelect)
   const current = useRecoilValue(currentMenuState)
 
-  console.log('current', current)
+  const hierarchy = useCallback(() => {
+    if (!current) {
+      return
+    }
 
-  console.log('bread!!!')
-  function handleClick(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) {
+    if (current?.level === 1) {
+      return <Typography color="textPrimary">{current.title}</Typography>
+    }
+
+    let trees = []
+    const arr = flatMenus.slice(
+      0,
+      flatMenus.findIndex(item => item.id === current.id) + 1,
+    )
+
+    arr.reverse().some(item => {
+      trees.push(item)
+      if (item.level === 1) {
+        return true
+      }
+    })
+
+    let nodes = trees.reverse().map(item =>
+      item.id === current.id ? (
+        <Typography key={current.id} color="textPrimary">
+          {current.title}
+        </Typography>
+      ) : (
+        <Link
+          key={item.id}
+          color="inherit"
+          href="/getting-started/installation/"
+          onClick={(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+            handleClick(event, item.url)
+          }}
+        >
+          {item.title}
+        </Link>
+      ),
+    )
+
+    return nodes
+  }, [current])
+
+  const handleClick = (
+    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+    url: string,
+  ) => {
     event.preventDefault()
-    router.push('/')
+    if (url) {
+      router.push(url)
+    }
   }
   return (
     <div className={classes.root}>
       <Breadcrumbs separator="›" aria-label="breadcrumb">
-        <Link color="inherit" href="/" onClick={handleClick}>
-          Home
-        </Link>
         <Link
           color="inherit"
-          href="/getting-started/installation/"
-          onClick={handleClick}
+          href="/"
+          onClick={(event: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
+            handleClick(event, '/')
+          }}
         >
-          Core
+          Home
         </Link>
-        {current && (
-          <Typography color="textPrimary">{current.title}</Typography>
-        )}
+        {hierarchy()}
       </Breadcrumbs>
     </div>
   )

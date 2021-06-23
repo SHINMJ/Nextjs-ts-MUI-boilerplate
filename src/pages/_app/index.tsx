@@ -1,13 +1,15 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Head from 'next/head'
 import { AppProps } from 'next/app'
 import { ThemeProvider } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import theme from '@styles/theme'
+import darkTheme from '@styles/darkTheme'
 import App from '@components/App/App'
 import { NextPageContext } from 'next'
 import { RecoilRoot } from 'recoil'
 import '@styles/global.css'
+import { Theme } from '@material-ui/core/styles'
 
 export type PageProps = {
   pathname?: string
@@ -17,6 +19,11 @@ export type PageProps = {
 
 const MyApp = (props: AppProps) => {
   const { Component, pageProps } = props
+  /**
+   * @TODO
+   * 테마 선택시 사용 (언제??)
+   */
+  const [selectTheme, setSelectTheme] = useState<Theme>(theme)
 
   useEffect(() => {
     // Remove the server-side injected CSS.
@@ -28,7 +35,7 @@ const MyApp = (props: AppProps) => {
 
   return (
     <RecoilRoot>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={selectTheme}>
         <Head>
           <meta
             name="viewport"

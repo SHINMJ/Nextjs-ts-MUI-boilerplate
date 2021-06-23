@@ -19,16 +19,16 @@ export default (_: NextApiRequest, res: NextApiResponse) => {
       ],
     },
     {
-      title: '게시판2',
+      title: '게시판',
       id: 'menu_2',
       icon: 'home',
       level: 1,
       children: [
         {
-          title: '게시판2 서브 1',
+          title: '게시판 서브 1',
           id: 'menu_2_sub_1',
-          url: '/board/skin_3',
           level: 2,
+          url: '/board/skin_3',
           auth: 'read',
         },
         {
