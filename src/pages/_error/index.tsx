@@ -13,7 +13,6 @@ const Error = ({ statusCode }) => {
 
 Error.getInitialProps = ({ res, err }: NextPageContext) => {
   const statusCode = res ? res.statusCode : err ? err.statusCode : 404
-
   return { statusCode }
 }
 
